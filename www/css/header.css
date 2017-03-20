@@ -1,0 +1,49 @@
+header {
+    background-color: #333;
+    color: #eee;
+    position: fixed;
+    left: 0;
+    top: 0;
+    border-bottom: 1px solid #666;
+    border-top: 1px solid #666;
+    height: 60px;
+    overflow: hidden;
+    width: 100%;
+    padding: 0;
+
+}
+
+header .td{
+  vertical-align: middle;
+  height: 60px;
+}
+
+header .td a{
+   padding: 20px 15px;
+}
+
+
+.ar {
+    text-align: right;
+}
+
+header h2 {
+    padding: 0px 10px;
+    margin: 0px;
+}
+
+header small {
+
+    font-weight: lighter;
+    font-size: 80%;
+      padding: 0px 10px;
+}
+
+.ret {
+    width: 60px;
+    font-size: 200%;
+    text-align: center;
+}
+.ret:active {
+    background-color: #555;
+}

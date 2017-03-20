@@ -1,0 +1,32 @@
+section {
+    background-color: #ffffff;
+    -webkit-transition: all 1s;
+    transition: all 1s;
+    cursor: pointer;
+}
+
+section:active {
+    background-color: #bbbbbb;
+}
+
+div.table, .cashs {
+    display: table;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+section, div.tr {
+    display: table-row;
+}
+
+div.td, section div {
+    display: table-cell;
+}
+
+section div {
+    padding: 3px 5px;
+}
+
+.w2 {
+    width: 20%;
+}

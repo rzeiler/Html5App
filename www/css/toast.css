@@ -1,0 +1,22 @@
+div#toast {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    height: auto;
+    overflow: hidden;
+    padding: 0px;
+}
+
+div#toast p {
+    background-color: #333;
+    color: #eee;
+    margin-bottom: -100%;
+    -webkit-transition: all 1s;
+    transition: all 1s;
+    padding: 10px;
+}
+
+div#toast.active p {
+    margin-bottom: 0px;
+}
