@@ -3,9 +3,6 @@
     -webkit-user-select: none;
 }
 
-
-
-
 input[type=text], input[type=date], input[type=number] {
     background-color: transparent;
     border: none;

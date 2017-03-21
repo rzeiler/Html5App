@@ -6,10 +6,19 @@ header {
     top: 0;
     border-bottom: 1px solid #666;
     border-top: 1px solid #666;
-    height: 60px;
+    /*height: 60px;*/
     overflow: hidden;
     width: 100%;
     padding: 0;
+
+}
+
+p.d{
+  position: absolute;
+   background-color: red;
+    color: #fff;
+     display: block;
+     z-index: 3;
 
 }
 

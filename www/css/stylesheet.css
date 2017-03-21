@@ -15,18 +15,43 @@ body {
 }
 
 main {
-    padding-top: 60px;
+    padding-top: 120px;
+}
+
+main>div {
+    transition: all 0.5s;
+    height: 0%;
+
+    opacity: 0;
+}
+
+main>div.show {
+  height: 100%;
+
+    opacity: 1;
 }
 
 .category {
     padding-top: 20px;
 }
 
+.tr {
+    display: table-row;
+}
 
+.td {
+    display: table-cell;
+}
+
+.table {
+    display: table;
+    border-collapse: collapse;
+    width: 100%;
+}
 
 a.fab {
     font-size: 200%;
-    position: absolute;
+    position: fixed;
     width: 50px;
     height: 50px;
     line-height: 58px;
