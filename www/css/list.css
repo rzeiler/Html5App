@@ -3,17 +3,19 @@
     margin: 0;
     display: block;
     overflow: hidden;
+    background-color: #44495C;
+    color: #FFF;
 }
 
 li {
+    background-color: #52596B;
     list-style: none;
-
     height: 0;
     line-height: 2em;
-    padding: 0 0.5em;
     overflow: hidden;
     display: block;
     margin: 0;
+    border-bottom: 1.5px solid #5B6272;
 }
 
 li.show {
@@ -22,9 +24,9 @@ li.show {
 }
 
 .slide-fade li {
-    transition: all 0.4s ease-out;
+    transition: all 0.5s ease-in-out;
     opacity: 0;
-    margin: 0 0 0 -100%;
+    margin: 0 0 0 -200%;
 }
 
 .slide-fade li.show {
@@ -32,6 +34,17 @@ li.show {
     opacity: 1;
 }
 
-.w2 {
-    width: 20%;
+#list .td {
+    vertical-align: middle;
+}
+
+#list .td.w2 {
+    text-align: center;
+    background-color: #44495C;
+    color:#EEE;
+    font-size: 200%;
+
+}
+#list .td.w7{
+  padding: 3px 3px 3px 10px;
 }

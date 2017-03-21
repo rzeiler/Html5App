@@ -1,36 +1,44 @@
 header {
-    background-color: #333;
+    background-color: #634B62;
     color: #eee;
     position: fixed;
     left: 0;
     top: 0;
-    border-bottom: 1px solid #666;
-    border-top: 1px solid #666;
-    /*height: 60px;*/
+    border-bottom: 1px solid #2D222D;
+    border-top: 1px solid #2D222D;
+   
     overflow: hidden;
     width: 100%;
     padding: 0;
-
 }
 
-p.d{
-  position: absolute;
-   background-color: red;
-    color: #fff;
-     display: block;
-     z-index: 3;
-
+header .td {
+    vertical-align: middle;
+    height: 60px;
 }
 
-header .td{
-  vertical-align: middle;
-  height: 60px;
+header .td a {
+    padding: 20px 15px;
 }
 
-header .td a{
-   padding: 20px 15px;
+div.td.ret {
+    width: 0px;
+    font-size: 0%;
+    overflow: hidden;
+    padding: 0px;
+    transition: all .2s ;
+ /*transition: width .5s, font-size 2s;*/
+    text-align: center;
 }
 
+div.td.ret.show {
+    font-size: 200%;
+    padding-left:10px;
+}
+
+div.td.ret:active {
+    background-color: #555;
+}
 
 .ar {
     text-align: right;
@@ -42,17 +50,7 @@ header h2 {
 }
 
 header small {
-
     font-weight: lighter;
     font-size: 80%;
-      padding: 0px 10px;
-}
-
-.ret {
-    width: 60px;
-    font-size: 200%;
-    text-align: center;
-}
-.ret:active {
-    background-color: #555;
+    padding: 0px 10px;
 }

@@ -12,10 +12,12 @@ body {
     margin: 0px;
     height: 100%;
     width: 100%;
+    background-color: #44495C;
+    color: #FFFFFF;
 }
 
 main {
-    padding-top: 120px;
+    padding-top: 60px;
 }
 
 main>div {
@@ -35,6 +37,9 @@ main>div.show {
     padding-top: 20px;
 }
 
+h4, p{
+  margin: 2px;
+}
 .tr {
     display: table-row;
 }
@@ -42,11 +47,39 @@ main>div.show {
 .td {
     display: table-cell;
 }
+.td.w2{
+  width: 20%;
+}
+
+.td.w7{
+  width: 78%;
+}
+.td.w1{
+  width: 2%;
+}
+
 
 .table {
     display: table;
     border-collapse: collapse;
     width: 100%;
+}
+
+#svg {
+  margin: auto;
+  width: 100px;
+  overflow: hidden;
+  
+}
+
+#svg circle {
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1s linear;
+  stroke: #666;
+  stroke-width: 1em;
+}
+#svg #bar {
+  stroke: #FF9F1E;
 }
 
 a.fab {
@@ -63,6 +96,7 @@ a.fab {
     border-radius: 30px;
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
     background-color: #F44336;
+    background-color: #9e9d24;
     -webkit-transition: all 1s;
     transition: all 1s;
     color: #ffffff;

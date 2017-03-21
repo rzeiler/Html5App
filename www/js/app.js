@@ -3,16 +3,16 @@ $(document).on('deviceready', function() {
     $('#open_categorys').trigger('click');
 });
 $(document).on('click', '.ret', function() {
-    if(navpos.length > 1) {
+    if (navpos.length > 1) {
         var o = navpos[navpos.length - 2];
         $(o).trigger('click');
     }
- });
+});
 
 function AddNavigtionPoint(v) {
     console.log('AddNavigtionPoint');
     var a = navpos.indexOf(v);
-    if(a == -1) {
+    if (a == -1) {
         navpos.push(v);
     } else {
         navpos.length = a + 1;
@@ -21,7 +21,7 @@ function AddNavigtionPoint(v) {
     $.each(navpos, function(i, v) {
         console.log(i, v);
         var a = $("<span/>");
-        if(v.indexOf('#') == 0) {
+        if (v.indexOf('#') == 0) {
             a.attr('id', v.substring(1));
         } else {
             a.attr('class', v.substring(1));
@@ -41,10 +41,15 @@ $(document).on('click', '#open_categorys', function() {
         var tmplate;
         $.get("template/categoryItem.html", function(data) {
             template = data;
-            for(var i = 0; i < 4; i++) {
+            for (var i = 0; i < 4; i++) {
                 var s = $(template);
                 s.find(".w2").text(i);
                 s.find(".edit_category").attr('id', i);
+                var str = s.find(".w2").text();
+                var color = '#' + (255 - str.charCodeAt(i)).toString(16) + 'A';
+                var color = '#' + parseInt(255 / 4 * (i + 1)).toString(16) + 'A';
+                console.log(color);
+                s.find(".w1").css('background-color', color);
                 $('#list').append(s);
             }
             AnimateSection();
@@ -56,13 +61,33 @@ $(document).on('click', '.open_cashs', function() {
     $('#open_settings').show();
     $('#save_cash').hide();
     $("header h2").text('Ausgaben');
-    $("main").load("template/cashs.html");
+    $("main").load("template/cashs.html", function() {
+        AnimateMain();
+        var tmplate;
+        $.get("template/cashItem.html", function(data) {
+            template = data;
+            for (var i = 0; i < 4; i++) {
+                var s = $(template);
+                s.find(".w2").text(i);
+                s.find(".edit_category").attr('id', i);
+                var str = s.find(".w2").text();
+                var color = '#' + (255 - str.charCodeAt(i)).toString(16) + 'A';
+                var color = '#' + parseInt(255 / 4 * (i + 1)).toString(16) + 'A';
+                console.log(color);
+                s.find(".w1").css('background-color', color);
+                $('#list').append(s);
+            }
+            AnimateSection();
+        });
+    });
 });
 $(document).on('click', '.edit_category', function() {
     AddNavigtionPoint('.edit_category');
     $('#save_category').show();
     $("header h2").text('Bearbeiten');
-    $("main").load("template/category.html");
+    $("main").load("template/category.html", function() {
+        AnimateMain();
+    });
 });
 $(document).on('click', '.edit_cash', function() {
     AddNavigtionPoint('.edit_cash');
@@ -77,7 +102,7 @@ $(document).on('click', '#open_settings', function() {
     $("main").load("template/settings.html");
 });
 $(document).on('keyup', '.input-field input', function() {
-    if(!$(this).val()) {
+    if (!$(this).val()) {
         $(this).next().removeClass('active');
     } else {
         $(this).next().addClass('active');
@@ -105,10 +130,10 @@ $.fn.toast = function(text) {
     }, 5000);
 };
 $(document).on('click', function() {
-    if(navpos.length > 1) {
-        $('.ret').show();
+    if (navpos.length > 1) {
+        $('.ret').addClass('show');
     } else {
-        $('.ret').hide();
+        $('.ret').removeClass('show');
     }
 });
 /* animate section element */
@@ -135,4 +160,11 @@ function AnimateMain() {
         $(this).addClass('show');
         $(this).dequeue();
     });
+
+    var c = Math.PI * (40 * 2);
+    var pct = ((100 - 50) / 100) * c;
+    $('circle').css({
+        strokeDashoffset: pct
+    });
+
 }
