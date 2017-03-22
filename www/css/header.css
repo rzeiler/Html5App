@@ -1,12 +1,12 @@
 header {
-    background-color: #634B62;
+    background-color: #2F323F;
     color: #eee;
     position: fixed;
     left: 0;
     top: 0;
     border-bottom: 1px solid #2D222D;
     border-top: 1px solid #2D222D;
-   
+    height: 60px;
     overflow: hidden;
     width: 100%;
     padding: 0;
@@ -26,14 +26,14 @@ div.td.ret {
     font-size: 0%;
     overflow: hidden;
     padding: 0px;
-    transition: all .2s ;
- /*transition: width .5s, font-size 2s;*/
+    transition: all .2s;
+    /*transition: width .5s, font-size 2s;*/
     text-align: center;
 }
 
 div.td.ret.show {
     font-size: 200%;
-    padding-left:10px;
+    padding-left: 10px;
 }
 
 div.td.ret:active {
@@ -53,4 +53,8 @@ header small {
     font-weight: lighter;
     font-size: 80%;
     padding: 0px 10px;
+}
+
+.brad {
+    display: none;
 }

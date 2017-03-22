@@ -1,9 +1,10 @@
 const navpos = new Array();
 $(document).on('deviceready', function() {
     $('#open_categorys').trigger('click');
+    //$('#open_settings').trigger('click');
 });
 $(document).on('click', '.ret', function() {
-    if (navpos.length > 1) {
+    if(navpos.length > 1) {
         var o = navpos[navpos.length - 2];
         $(o).trigger('click');
     }
@@ -12,7 +13,7 @@ $(document).on('click', '.ret', function() {
 function AddNavigtionPoint(v) {
     console.log('AddNavigtionPoint');
     var a = navpos.indexOf(v);
-    if (a == -1) {
+    if(a == -1) {
         navpos.push(v);
     } else {
         navpos.length = a + 1;
@@ -21,7 +22,7 @@ function AddNavigtionPoint(v) {
     $.each(navpos, function(i, v) {
         console.log(i, v);
         var a = $("<span/>");
-        if (v.indexOf('#') == 0) {
+        if(v.indexOf('#') == 0) {
             a.attr('id', v.substring(1));
         } else {
             a.attr('class', v.substring(1));
@@ -41,7 +42,7 @@ $(document).on('click', '#open_categorys', function() {
         var tmplate;
         $.get("template/categoryItem.html", function(data) {
             template = data;
-            for (var i = 0; i < 4; i++) {
+            for(var i = 0; i < 4; i++) {
                 var s = $(template);
                 s.find(".w2").text(i);
                 s.find(".edit_category").attr('id', i);
@@ -53,6 +54,8 @@ $(document).on('click', '#open_categorys', function() {
                 $('#list').append(s);
             }
             AnimateSection();
+            $('#a').css('width', '36%');
+            $('#b').css('width', '76%');
         });
     });
 });
@@ -66,7 +69,7 @@ $(document).on('click', '.open_cashs', function() {
         var tmplate;
         $.get("template/cashItem.html", function(data) {
             template = data;
-            for (var i = 0; i < 4; i++) {
+            for(var i = 0; i < 4; i++) {
                 var s = $(template);
                 s.find(".w2").text(i);
                 s.find(".edit_category").attr('id', i);
@@ -78,6 +81,8 @@ $(document).on('click', '.open_cashs', function() {
                 $('#list').append(s);
             }
             AnimateSection();
+            $('#a').css('width', '66%');
+            $('#b').css('width', '26%');
         });
     });
 });
@@ -93,16 +98,20 @@ $(document).on('click', '.edit_cash', function() {
     AddNavigtionPoint('.edit_cash');
     $('#save_cash').show();
     $("header h2").text('Bearbeiten');
-    $("main").load("template/cash.html");
+    $("main").load("template/cash.html", function() {
+        AnimateMain();
+    });
 });
 $(document).on('click', '#open_settings', function() {
     AddNavigtionPoint('#open_settings');
     $('#open_settings').hide();
     $("header h2").text('Einstellungen');
-    $("main").load("template/settings.html");
+    $("main").load("template/settings.html", function() {
+        AnimateMain();
+      });
 });
 $(document).on('keyup', '.input-field input', function() {
-    if (!$(this).val()) {
+    if(!$(this).val()) {
         $(this).next().removeClass('active');
     } else {
         $(this).next().addClass('active');
@@ -130,7 +139,7 @@ $.fn.toast = function(text) {
     }, 5000);
 };
 $(document).on('click', function() {
-    if (navpos.length > 1) {
+    if(navpos.length > 1) {
         $('.ret').addClass('show');
     } else {
         $('.ret').removeClass('show');
@@ -155,16 +164,9 @@ function AnimateSection() {
 }
 
 function AnimateMain() {
-    $('main>div').delay((20)).queue(function() {
+    $('main>div').delay(20).queue(function() {
         console.log("run");
         $(this).addClass('show');
         $(this).dequeue();
     });
-
-    var c = Math.PI * (40 * 2);
-    var pct = ((100 - 50) / 100) * c;
-    $('circle').css({
-        strokeDashoffset: pct
-    });
-
 }

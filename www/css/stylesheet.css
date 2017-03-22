@@ -17,7 +17,7 @@ body {
 }
 
 main {
-    padding-top: 60px;
+    padding-top: 61px;
 }
 
 main>div {
@@ -58,6 +58,11 @@ h4, p{
   width: 2%;
 }
 
+.td.w5{
+  width: 50%;
+}
+
+
 
 .table {
     display: table;
@@ -65,22 +70,6 @@ h4, p{
     width: 100%;
 }
 
-#svg {
-  margin: auto;
-  width: 100px;
-  overflow: hidden;
-  
-}
-
-#svg circle {
-  stroke-dashoffset: 0;
-  transition: stroke-dashoffset 1s linear;
-  stroke: #666;
-  stroke-width: 1em;
-}
-#svg #bar {
-  stroke: #FF9F1E;
-}
 
 a.fab {
     font-size: 200%;
