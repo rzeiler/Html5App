@@ -1,5 +1,9 @@
 const navpos = new Array();
+var color;
 $(document).on('deviceready', function() {
+    $.getJSON("data/color.json", function(data) {
+        color = data;
+    });
     $('#open_categorys').trigger('click');
     //$('#open_settings').trigger('click');
 });
@@ -37,15 +41,23 @@ function toListCategory(data) {
     $('#list').html('');
     $.each(data, function(key, val) {
         var s = $(currentHtml);
-        s.find(".w2").text(val.title.substring(0, 1));
+        s.find(".w2 .fab").text(val.title.substring(0, 1));
         s.find("h4").text(val.title);
         s.find("p").text(val.sum);
         s.find(".edit_category").data('id', val.id);
         s.find(".open_cashs").data('id', val.id);
-        var str = s.find(".w2").text();
-        var color = '#' + (255 - str.charCodeAt(1)).toString(16) + 'A';
-        var color = '#' + parseInt(255 / 4 * (data.length + 1)).toString(16) + 'A';
-        s.find(".w1").css('background-color', color);
+        var str = s.find(".w2 .fab").text();
+        var color = '#' + (255 - str.charCodeAt(0)).toString(16) + 'A';
+
+        $.grep(color, function(n, i) {
+            var t = n.title.toLowerCase().substring(0, 1);
+
+            return t.indexOf(f) != val.title;
+        });
+
+
+
+        s.find(".w2 .fab").css('background-color', color);
         $('#list').append(s);
     });
     AnimateSection();
