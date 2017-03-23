@@ -31,7 +31,68 @@ function AddNavigtionPoint(v) {
         $('.brad').append(a);
     });
 }
+var currentData, currentHtml, openCaregoryId, openCashId;
+
+function toListCategory(data) {
+    $('#list').html('');
+    $.each(data, function(key, val) {
+        var s = $(currentHtml);
+        s.find(".w2").text(val.title.substring(0, 1));
+        s.find("h4").text(val.title);
+        s.find("p").text(val.sum);
+        s.find(".edit_category").data('id', val.id);
+        s.find(".open_cashs").data('id', val.id);
+        var str = s.find(".w2").text();
+        var color = '#' + (255 - str.charCodeAt(1)).toString(16) + 'A';
+        var color = '#' + parseInt(255 / 4 * (data.length + 1)).toString(16) + 'A';
+        s.find(".w1").css('background-color', color);
+        $('#list').append(s);
+    });
+    AnimateSection();
+}
+$(document).on('keyup', '.categorys_filter', function() {
+    var val = $(this).val();
+    var as = currentData;
+    if(val != "") {
+        as = $.grep(currentData, function(n, i) {
+            var t = n.title.toLowerCase();
+            var f = val.toLowerCase();
+            return t.indexOf(f) != -1;
+        });
+    }
+    toListCategory(as);
+});
+
+function toListCash(data) {
+    $('#list').html('');
+    $.each(data, function(key, val) {
+        var s = $(currentHtml);
+        s.find(".w2").text(val.sum);
+        s.find("h4").text(val.title);
+        s.find("p").text(val.date);
+        s.find(".edit_category").data('id', val.id);
+        var str = s.find(".w2").text();
+        var color = '#' + (255 - str.charCodeAt(1)).toString(16) + 'A';
+        var color = '#' + parseInt(255 / 4 * (data.length + 1)).toString(16) + 'A';
+        s.find(".w1").css('background-color', color);
+        $('#list').append(s);
+    });
+    AnimateSection();
+}
+$(document).on('keyup', '.cash_filter', function() {
+    var val = $(this).val();
+    var as = currentData;
+    if(val != "") {
+        as = $.grep(currentData, function(n, i) {
+            var t = n.title.toLowerCase();
+            var f = val.toLowerCase();
+            return t.indexOf(f) != -1;
+        });
+    }
+    toListCash(as);
+});
 $(document).on('click', '#open_categorys', function() {
+    openCaregoryId = 0;
     AddNavigtionPoint('#open_categorys');
     $('#open_settings').show();
     $('#save_category').hide();
@@ -40,26 +101,20 @@ $(document).on('click', '#open_categorys', function() {
     $("main").load("template/categorys.html", function() {
         AnimateMain();
         var tmplate;
-        $.get("template/categoryItem.html", function(data) {
-            template = data;
-            for(var i = 0; i < 4; i++) {
-                var s = $(template);
-                s.find(".w2").text(i);
-                s.find(".edit_category").attr('id', i);
-                var str = s.find(".w2").text();
-                var color = '#' + (255 - str.charCodeAt(i)).toString(16) + 'A';
-                var color = '#' + parseInt(255 / 4 * (i + 1)).toString(16) + 'A';
-                console.log(color);
-                s.find(".w1").css('background-color', color);
-                $('#list').append(s);
-            }
-            AnimateSection();
+        $.get("template/categoryItem.html", function(html) {
+            $.getJSON("data/category.json", function(data) {
+                currentData = data;
+                currentHtml = html;
+                toListCategory(currentData);
+            });
             $('#a').css('width', '36%');
             $('#b').css('width', '76%');
         });
     });
 });
 $(document).on('click', '.open_cashs', function() {
+    AnimateSection();
+    openCaregoryId = ($(this).data('id') != null) ? $(this).data('id') : openCaregoryId;
     AddNavigtionPoint('.open_cashs');
     $('#open_settings').show();
     $('#save_cash').hide();
@@ -67,19 +122,15 @@ $(document).on('click', '.open_cashs', function() {
     $("main").load("template/cashs.html", function() {
         AnimateMain();
         var tmplate;
-        $.get("template/cashItem.html", function(data) {
-            template = data;
-            for(var i = 0; i < 4; i++) {
-                var s = $(template);
-                s.find(".w2").text(i);
-                s.find(".edit_category").attr('id', i);
-                var str = s.find(".w2").text();
-                var color = '#' + (255 - str.charCodeAt(i)).toString(16) + 'A';
-                var color = '#' + parseInt(255 / 4 * (i + 1)).toString(16) + 'A';
-                console.log(color);
-                s.find(".w1").css('background-color', color);
-                $('#list').append(s);
-            }
+        $.get("template/cashItem.html", function(html) {
+            template = html;
+            $.getJSON("data/cash.json", function(data) {
+                currentData = $.grep(data, function(n, i) {
+                    return n.id === openCaregoryId;
+                });
+                currentHtml = html;
+                toListCash(currentData);
+            });
             AnimateSection();
             $('#a').css('width', '66%');
             $('#b').css('width', '26%');
@@ -108,7 +159,7 @@ $(document).on('click', '#open_settings', function() {
     $("header h2").text('Einstellungen');
     $("main").load("template/settings.html", function() {
         AnimateMain();
-      });
+    });
 });
 $(document).on('keyup', '.input-field input', function() {
     if(!$(this).val()) {
@@ -147,25 +198,16 @@ $(document).on('click', function() {
 });
 /* animate section element */
 function AnimateSection() {
-    $('div.categorys div.table section').each(function(i) {
-        $(this).delay((i * 80)).queue(function() {
-            console.log("run");
-            $(this).addClass('show');
-            $(this).dequeue();
-        });
-    });
     $('#list li').each(function(i) {
-        $(this).delay((i * 150)).queue(function() {
-            console.log("run");
-            $(this).addClass('show');
+        $(this).delay((i * 50)).queue(function() {
+            $(this).toggleClass('show');
             $(this).dequeue();
         });
     });
 }
 
 function AnimateMain() {
-    $('main>div').delay(20).queue(function() {
-        console.log("run");
+    $('main>div').delay(50).queue(function() {
         $(this).addClass('show');
         $(this).dequeue();
     });

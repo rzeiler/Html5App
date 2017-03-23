@@ -43,7 +43,12 @@ li.show {
     background-color: #44495C;
     color:#EEE;
     font-size: 200%;
-
+}
+#list.cashs .td.w2 {
+    text-align: center;
+    background-color: #44495C;
+    color:#EEE;
+    font-size: 100%;
 }
 #list .td.w7{
   padding: 3px 3px 3px 10px;
