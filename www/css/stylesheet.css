@@ -12,7 +12,7 @@ body {
     margin: 0px;
     height: 100%;
     width: 100%;
-    background-color: #FFFFFF;
+    background-color: #EEEEEE;
     color: #333333;
 }
 
@@ -23,13 +23,11 @@ main {
 main>div {
     transition: all 0.5s;
     height: 0%;
-
     opacity: 0;
 }
 
 main>div.show {
-  height: 100%;
-
+    height: 100%;
     opacity: 1;
 }
 
@@ -37,9 +35,10 @@ main>div.show {
     padding-top: 20px;
 }
 
-h4, p{
-  margin: 2px;
+h4, p {
+    margin: 2px;
 }
+
 .tr {
     display: table-row;
 }
@@ -47,29 +46,28 @@ h4, p{
 .td {
     display: table-cell;
 }
-.td.w2{
-  width: 20%;
+
+.td.w2 {
+    width: 20%;
 }
 
-.td.w7{
-  width: 78%;
-}
-.td.w1{
-  width: 2%;
+.td.w7 {
+    width: 78%;
 }
 
-.td.w5{
-  width: 50%;
+.td.w1 {
+    width: 2%;
 }
 
-
+.td.w5 {
+    width: 50%;
+}
 
 .table {
     display: table;
     border-collapse: collapse;
     width: 100%;
 }
-
 
 a.fab {
     font-size: 200%;
@@ -96,5 +94,23 @@ a.fab:active {
 }
 
 .settings {
+    padding: 10px;
+}
+
+input.categorys_filter {
+    margin: 2%;
+    width: 92%;
+    padding: 2%;
+    display: block;
+    border-radius: 0px;
+    border-bottom: 1px solid #888 !important;
+    border-top: 1px solid transparent;
+    border-left: 1px solid transparent;
+    border-right: 1px solid transparent;
+    background-color: transparent;
+}
+
+.gray {
+    background-color: #EEEEEE;
     padding: 10px;
 }

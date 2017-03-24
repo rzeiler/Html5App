@@ -1,11 +1,14 @@
 const navpos = new Array();
-var color;
+var colorData;
 $(document).on('deviceready', function() {
     $.getJSON("data/color.json", function(data) {
-        color = data;
+        colorData = data;
+        console.log(colorData);
     });
     $('#open_categorys').trigger('click');
     //$('#open_settings').trigger('click');
+    // openCaregoryId = 0;
+    // $('.edit_category').trigger('click');
 });
 $(document).on('click', '.ret', function() {
     if(navpos.length > 1) {
@@ -38,6 +41,7 @@ function AddNavigtionPoint(v) {
 var currentData, currentHtml, openCaregoryId, openCashId;
 
 function toListCategory(data) {
+    AnimateSection();
     $('#list').html('');
     $.each(data, function(key, val) {
         var s = $(currentHtml);
@@ -48,16 +52,11 @@ function toListCategory(data) {
         s.find(".open_cashs").data('id', val.id);
         var str = s.find(".w2 .fab").text();
         var color = '#' + (255 - str.charCodeAt(0)).toString(16) + 'A';
-
-        $.grep(color, function(n, i) {
-            var t = n.title.toLowerCase().substring(0, 1);
-
-            return t.indexOf(f) != val.title;
+        var l = s.find(".w2 .fab").text().toLowerCase();
+        var c = $.grep(colorData, function(n, i) {
+            return l == n.letter;
         });
-
-
-
-        s.find(".w2 .fab").css('background-color', color);
+        s.find(".w2 .fab").css('background-color', c[0].color);
         $('#list').append(s);
     });
     AnimateSection();
@@ -173,13 +172,7 @@ $(document).on('click', '#open_settings', function() {
         AnimateMain();
     });
 });
-$(document).on('keyup', '.input-field input', function() {
-    if(!$(this).val()) {
-        $(this).next().removeClass('active');
-    } else {
-        $(this).next().addClass('active');
-    }
-});
+ 
 $(document).on('click', '#save_category', function() {
     $("#toast").toast('Kategory gespeichert');
     $('#save_category').hide();
