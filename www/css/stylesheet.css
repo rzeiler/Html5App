@@ -12,8 +12,11 @@ body {
     margin: 0px;
     height: 100%;
     width: 100%;
-    background-color: #EEEEEE;
+    background-color: #FFFFF;
     color: #333333;
+}
+body.gray {
+    background-color: #EEEEEE;
 }
 
 main {
@@ -97,7 +100,7 @@ a.fab:active {
     padding: 10px;
 }
 
-input.categorys_filter {
+input.categorys_filter, input.cashs_filter {
     margin: 2%;
     width: 92%;
     padding: 2%;
@@ -110,7 +113,7 @@ input.categorys_filter {
     background-color: transparent;
 }
 
-.gray {
+div.gray {
     background-color: #EEEEEE;
     padding: 10px;
 }

@@ -11,7 +11,7 @@ $(document).on('deviceready', function() {
     // $('.edit_category').trigger('click');
 });
 $(document).on('click', '.ret', function() {
-    if(navpos.length > 1) {
+    if (navpos.length > 1) {
         var o = navpos[navpos.length - 2];
         $(o).trigger('click');
     }
@@ -20,7 +20,7 @@ $(document).on('click', '.ret', function() {
 function AddNavigtionPoint(v) {
     console.log('AddNavigtionPoint');
     var a = navpos.indexOf(v);
-    if(a == -1) {
+    if (a == -1) {
         navpos.push(v);
     } else {
         navpos.length = a + 1;
@@ -29,7 +29,7 @@ function AddNavigtionPoint(v) {
     $.each(navpos, function(i, v) {
         console.log(i, v);
         var a = $("<span/>");
-        if(v.indexOf('#') == 0) {
+        if (v.indexOf('#') == 0) {
             a.attr('id', v.substring(1));
         } else {
             a.attr('class', v.substring(1));
@@ -64,7 +64,7 @@ function toListCategory(data) {
 $(document).on('keyup', '.categorys_filter', function() {
     var val = $(this).val();
     var as = currentData;
-    if(val != "") {
+    if (val != "") {
         as = $.grep(currentData, function(n, i) {
             var t = n.title.toLowerCase();
             var f = val.toLowerCase();
@@ -90,10 +90,10 @@ function toListCash(data) {
     });
     AnimateSection();
 }
-$(document).on('keyup', '.cash_filter', function() {
+$(document).on('keyup', '.cashs_filter', function() {
     var val = $(this).val();
     var as = currentData;
-    if(val != "") {
+    if (val != "") {
         as = $.grep(currentData, function(n, i) {
             var t = n.title.toLowerCase();
             var f = val.toLowerCase();
@@ -109,15 +109,28 @@ $(document).on('click', '#open_categorys', function() {
     $('#save_category').hide();
     $('#save_cash').hide();
     $("header h2").text('Kategorien');
+    $('body').removeClass('gray');
     $("main").load("template/categorys.html", function() {
         AnimateMain();
         var tmplate;
         $.get("template/categoryItem.html", function(html) {
-            $.getJSON("data/category.json", function(data) {
-                currentData = data;
-                currentHtml = html;
-                toListCategory(currentData);
-            });
+
+            data = getCategorys(toListCategory);
+            console.log('getCategorys',data);
+            // var len = results.rows.length,
+            //     i;
+            // $("#rowCount").append(len);
+            // for (i = 0; i < len; i++) {
+            //     $("#TableData").append("<tr><td>" + results.rows.item(i).id + "</td><td>" + results.rows.item(i).title + "</td><td>" + results.rows.item(i).desc + "</td></tr>");
+            // }
+            //
+            //
+            //
+            // $.getJSON("data/category.json", function(data) {
+            //     currentData = data;
+            //     currentHtml = html;
+            //     toListCategory(currentData);
+            // });
             $('#a').css('width', '36%');
             $('#b').css('width', '76%');
         });
@@ -130,6 +143,7 @@ $(document).on('click', '.open_cashs', function() {
     $('#open_settings').show();
     $('#save_cash').hide();
     $("header h2").text('Ausgaben');
+    $('body').removeClass('gray');
     $("main").load("template/cashs.html", function() {
         AnimateMain();
         var tmplate;
@@ -152,6 +166,7 @@ $(document).on('click', '.edit_category', function() {
     AddNavigtionPoint('.edit_category');
     $('#save_category').show();
     $("header h2").text('Bearbeiten');
+    $('body').addClass('gray');
     $("main").load("template/category.html", function() {
         AnimateMain();
     });
@@ -160,6 +175,7 @@ $(document).on('click', '.edit_cash', function() {
     AddNavigtionPoint('.edit_cash');
     $('#save_cash').show();
     $("header h2").text('Bearbeiten');
+    $('body').addClass('gray');
     $("main").load("template/cash.html", function() {
         AnimateMain();
     });
@@ -168,16 +184,18 @@ $(document).on('click', '#open_settings', function() {
     AddNavigtionPoint('#open_settings');
     $('#open_settings').hide();
     $("header h2").text('Einstellungen');
+    $('body').addClass('gray');
     $("main").load("template/settings.html", function() {
         AnimateMain();
     });
 });
- 
-$(document).on('click', '#save_category', function() {
-    $("#toast").toast('Kategory gespeichert');
-    $('#save_category').hide();
-    $('#open_categorys').trigger('click');
-});
+
+function toTimestamp(strDate){
+ var datum = Date.parse(strDate);
+ return datum/1000;
+}
+
+
 $(document).on('click', '#save_cash', function() {
     $("#toast").toast('Ausgabe gespeichert')
     $('#save_cash').hide();
@@ -195,7 +213,7 @@ $.fn.toast = function(text) {
     }, 5000);
 };
 $(document).on('click', function() {
-    if(navpos.length > 1) {
+    if (navpos.length > 1) {
         $('.ret').addClass('show');
     } else {
         $('.ret').removeClass('show');
