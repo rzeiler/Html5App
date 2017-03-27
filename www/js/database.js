@@ -23,7 +23,7 @@ try {
                 alert("Error occurred while creating the table.");
             });
         });
-        if(myDB != null) {
+        if (myDB != null) {
             var event = new CustomEvent("databaseready", {
                 "detail": "fmhpro"
             });
@@ -59,29 +59,31 @@ try {
                 var len = results.rows.length,
                     i;
                 'title, createdate, isdeleted, user, rating'
-                for(i = 0; i < len; i++) {
+                for (i = 0; i < len; i++) {
                     var createdate = results.rows.item(i).createdate;
-                    // Create a new JavaScript Date object based on the timestamp
-                    // multiplied by 1000 so that the argument is in milliseconds, not seconds.
                     var date = new Date(createdate * 1000);
                     var d = date.getDate();
                     var m = "0" + date.getMonth();
                     var y = "0" + date.getYear();
                     var formattedTime = d + "." + m + "." + y;
-                    formattedTime = date.toLocaleDateString();
+                     formattedTime = date.toLocaleDateString();
+
+
+                  //  formattedTime = date.toISOString();
+                    console.log(formattedTime);
                     results.rows.item(i).createdate = formattedTime;
                     data.push(results.rows.item(i));
                 }
-                $(document).trigger('categoryloaded', [{
+                $(document).trigger('CreateCategoryList', [{
                     data: data
-                }]);
+                }, false]);
             }, function(error) {
                 console.log(error);
                 result = 'Error SELECT';
             });
         });
     });
- 
-} catch(e) {
+
+} catch (e) {
     alert(e);
 } finally {}

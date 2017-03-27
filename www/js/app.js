@@ -4,7 +4,7 @@ var colorData;
 $(document).on('deviceready', function() {
     $.getJSON("data/color.json", function(data) {
         colorData = data;
-        console.log(colorData);
+        console.log("color ready", colorData);
     });
 });
 /* run app with database */
@@ -16,7 +16,7 @@ $(document).on('databaseready', function() {
     // $('.edit_category').trigger('click');
 });
 $(document).on('click', '.ret', function() {
-    if(navpos.length > 1) {
+    if (navpos.length > 1) {
         var o = navpos[navpos.length - 2];
         $(o).trigger('click');
     }
@@ -25,7 +25,7 @@ $(document).on('click', '.ret', function() {
 function AddNavigtionPoint(v) {
     console.log('AddNavigtionPoint');
     var a = navpos.indexOf(v);
-    if(a == -1) {
+    if (a == -1) {
         navpos.push(v);
     } else {
         navpos.length = a + 1;
@@ -34,7 +34,7 @@ function AddNavigtionPoint(v) {
     $.each(navpos, function(i, v) {
         console.log(i, v);
         var a = $("<span/>");
-        if(v.indexOf('#') == 0) {
+        if (v.indexOf('#') == 0) {
             a.attr('id', v.substring(1));
         } else {
             a.attr('class', v.substring(1));
@@ -45,51 +45,55 @@ function AddNavigtionPoint(v) {
 }
 var currentData, currentHtml, openCaregoryId, openCashId;
 
-$(document).on('categoryloaded', function(e, json) {
-    currentData = json.data;
-
-
-
-
-
-    console.log(currentData);
-    toListCategory(currentData);
+$(document).on('CreateCategoryList', function(e, json, isSearch) {
+    $('#list').html('');
+    if (isSearch === false) {
+        currentData = json.data;
+        console.log("init data", currentData);
+    }
+    /* load template */
+    $.get("template/categoryItem.html", function(html) {
+        $.each(json.data, function(key, item) {
+            var s = $(html);
+            try {
+                s.find(".w2 .fab").text(item.title.substring(0, 1));
+                s.find("h4").text(item.title);
+                s.find("p").text(item.sum);
+                s.find(".edit_category").data('id', item.id);
+                s.find(".open_cashs").data('id', item.id);
+                var str = s.find(".w2 .fab").text();
+                var l = s.find(".w2 .fab").text().toLowerCase();
+                var c = $.grep(colorData, function(n, i) {
+                    return l === n.letter;
+                });
+                s.find(".w2 .fab").css('background-color', c[0].color);
+            } catch (e) {
+                s = e;
+            } finally {
+                /* show */
+                $('#list').append(s);
+            }
+        });
+        AnimateSection();
+    });
     $('#a').css('width', '36%');
     $('#b').css('width', '76%');
 });
 
-function toListCategory(data) {
-    AnimateSection();
-    $('#list').html('');
-    $.each(data, function(key, val) {
-        var item = val;
-        var s = $(currentHtml);
-        s.find(".w2 .fab").text(item.title.substring(0, 1));
-        s.find("h4").text(item.title);
-        s.find("p").text(item.sum);
-        s.find(".edit_category").data('id', item.id);
-        s.find(".open_cashs").data('id', item.id);
-        var str = s.find(".w2 .fab").text();
-        var l = s.find(".w2 .fab").text().toLowerCase();
-        var c = $.grep(colorData, function(n, i) {
-            return l == n.letter;
-        });
-        s.find(".w2 .fab").css('background-color', c[0].color);
-        $('#list').append(s);
-    });
-    AnimateSection();
-}
+/* filter list */
 $(document).on('keyup', '.categorys_filter', function() {
     var val = $(this).val();
     var as = currentData;
-    if(val != "") {
+    if (val != "") {
         as = $.grep(currentData, function(n, i) {
             var t = n.title.toLowerCase();
             var f = val.toLowerCase();
             return t.indexOf(f) != -1;
         });
     }
-    toListCategory(as);
+    $(document).trigger('CreateCategoryList', [{
+        data: as
+    }, false]);
 });
 
 function toListCash(data) {
@@ -112,7 +116,7 @@ function toListCash(data) {
 $(document).on('keyup', '.cashs_filter', function() {
     var val = $(this).val();
     var as = currentData;
-    if(val != "") {
+    if (val != "") {
         as = $.grep(currentData, function(n, i) {
             var t = n.title.toLowerCase();
             var f = val.toLowerCase();
@@ -131,13 +135,7 @@ $(document).on('click', '#open_categorys', function() {
     $('body').removeClass('gray');
     $("main").load("template/categorys.html", function() {
         AnimateMain();
-        var tmplate;
-        $.get("template/categoryItem.html", function(html) {
-            currentHtml = html;
-            $(document).trigger('getcategorys', {
-                "test": "hallo"
-            });
-        });
+        $(document).trigger('getcategorys');
     });
 });
 $(document).on('click', '.open_cashs', function() {
@@ -176,15 +174,10 @@ $(document).on('click', '.edit_category', function() {
     $("main").load("template/category.html", function() {
         AnimateMain();
         var d = $.grep(currentData, function(n, i) {
-            console.log(n, i);
             return n.id == id;
+
         });
         'title, createdate, isdeleted, user, rating'
-
-
-alert(d[0].createdate);
-
-
         $('#title').val(d[0].title);
         $('#date').val(d[0].createdate);
         $('#rating').val(d[0].rating);
@@ -230,7 +223,7 @@ $.fn.toast = function(text) {
     }, 5000);
 };
 $(document).on('click', function() {
-    if(navpos.length > 1) {
+    if (navpos.length > 1) {
         $('.ret').addClass('show');
     } else {
         $('.ret').removeClass('show');
