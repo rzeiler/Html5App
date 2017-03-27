@@ -1,17 +1,22 @@
 const navpos = new Array();
 var colorData;
+/* get color */
 $(document).on('deviceready', function() {
     $.getJSON("data/color.json", function(data) {
         colorData = data;
         console.log(colorData);
     });
+});
+/* run app with database */
+$(document).on('databaseready', function() {
+    console.log('databaseready');
     $('#open_categorys').trigger('click');
     //$('#open_settings').trigger('click');
     // openCaregoryId = 0;
     // $('.edit_category').trigger('click');
 });
 $(document).on('click', '.ret', function() {
-    if (navpos.length > 1) {
+    if(navpos.length > 1) {
         var o = navpos[navpos.length - 2];
         $(o).trigger('click');
     }
@@ -20,7 +25,7 @@ $(document).on('click', '.ret', function() {
 function AddNavigtionPoint(v) {
     console.log('AddNavigtionPoint');
     var a = navpos.indexOf(v);
-    if (a == -1) {
+    if(a == -1) {
         navpos.push(v);
     } else {
         navpos.length = a + 1;
@@ -29,7 +34,7 @@ function AddNavigtionPoint(v) {
     $.each(navpos, function(i, v) {
         console.log(i, v);
         var a = $("<span/>");
-        if (v.indexOf('#') == 0) {
+        if(v.indexOf('#') == 0) {
             a.attr('id', v.substring(1));
         } else {
             a.attr('class', v.substring(1));
@@ -40,18 +45,31 @@ function AddNavigtionPoint(v) {
 }
 var currentData, currentHtml, openCaregoryId, openCashId;
 
+$(document).on('categoryloaded', function(e, json) {
+    currentData = json.data;
+
+
+
+
+
+    console.log(currentData);
+    toListCategory(currentData);
+    $('#a').css('width', '36%');
+    $('#b').css('width', '76%');
+});
+
 function toListCategory(data) {
     AnimateSection();
     $('#list').html('');
     $.each(data, function(key, val) {
+        var item = val;
         var s = $(currentHtml);
-        s.find(".w2 .fab").text(val.title.substring(0, 1));
-        s.find("h4").text(val.title);
-        s.find("p").text(val.sum);
-        s.find(".edit_category").data('id', val.id);
-        s.find(".open_cashs").data('id', val.id);
+        s.find(".w2 .fab").text(item.title.substring(0, 1));
+        s.find("h4").text(item.title);
+        s.find("p").text(item.sum);
+        s.find(".edit_category").data('id', item.id);
+        s.find(".open_cashs").data('id', item.id);
         var str = s.find(".w2 .fab").text();
-        var color = '#' + (255 - str.charCodeAt(0)).toString(16) + 'A';
         var l = s.find(".w2 .fab").text().toLowerCase();
         var c = $.grep(colorData, function(n, i) {
             return l == n.letter;
@@ -64,7 +82,7 @@ function toListCategory(data) {
 $(document).on('keyup', '.categorys_filter', function() {
     var val = $(this).val();
     var as = currentData;
-    if (val != "") {
+    if(val != "") {
         as = $.grep(currentData, function(n, i) {
             var t = n.title.toLowerCase();
             var f = val.toLowerCase();
@@ -83,9 +101,10 @@ function toListCash(data) {
         s.find("p").text(val.date);
         s.find(".edit_category").data('id', val.id);
         var str = s.find(".w2").text();
-        var color = '#' + (255 - str.charCodeAt(1)).toString(16) + 'A';
-        var color = '#' + parseInt(255 / 4 * (data.length + 1)).toString(16) + 'A';
-        s.find(".w1").css('background-color', color);
+        var c = $.grep(colorData, function(n, i) {
+            return l == n.letter;
+        });
+        s.find(".w1").css('background-color', c[0].color);
         $('#list').append(s);
     });
     AnimateSection();
@@ -93,7 +112,7 @@ function toListCash(data) {
 $(document).on('keyup', '.cashs_filter', function() {
     var val = $(this).val();
     var as = currentData;
-    if (val != "") {
+    if(val != "") {
         as = $.grep(currentData, function(n, i) {
             var t = n.title.toLowerCase();
             var f = val.toLowerCase();
@@ -114,25 +133,10 @@ $(document).on('click', '#open_categorys', function() {
         AnimateMain();
         var tmplate;
         $.get("template/categoryItem.html", function(html) {
-
-            data = getCategorys(toListCategory);
-            console.log('getCategorys',data);
-            // var len = results.rows.length,
-            //     i;
-            // $("#rowCount").append(len);
-            // for (i = 0; i < len; i++) {
-            //     $("#TableData").append("<tr><td>" + results.rows.item(i).id + "</td><td>" + results.rows.item(i).title + "</td><td>" + results.rows.item(i).desc + "</td></tr>");
-            // }
-            //
-            //
-            //
-            // $.getJSON("data/category.json", function(data) {
-            //     currentData = data;
-            //     currentHtml = html;
-            //     toListCategory(currentData);
-            // });
-            $('#a').css('width', '36%');
-            $('#b').css('width', '76%');
+            currentHtml = html;
+            $(document).trigger('getcategorys', {
+                "test": "hallo"
+            });
         });
     });
 });
@@ -162,13 +166,28 @@ $(document).on('click', '.open_cashs', function() {
         });
     });
 });
+/* edit category */
 $(document).on('click', '.edit_category', function() {
     AddNavigtionPoint('.edit_category');
     $('#save_category').show();
     $("header h2").text('Bearbeiten');
     $('body').addClass('gray');
+    var id = $(this).data('id');
     $("main").load("template/category.html", function() {
         AnimateMain();
+        var d = $.grep(currentData, function(n, i) {
+            console.log(n, i);
+            return n.id == id;
+        });
+        'title, createdate, isdeleted, user, rating'
+
+
+alert(d[0].createdate);
+
+
+        $('#title').val(d[0].title);
+        $('#date').val(d[0].createdate);
+        $('#rating').val(d[0].rating);
     });
 });
 $(document).on('click', '.edit_cash', function() {
@@ -190,12 +209,10 @@ $(document).on('click', '#open_settings', function() {
     });
 });
 
-function toTimestamp(strDate){
- var datum = Date.parse(strDate);
- return datum/1000;
+function toTimestamp(strDate) {
+    var datum = Date.parse(strDate);
+    return datum / 1000;
 }
-
-
 $(document).on('click', '#save_cash', function() {
     $("#toast").toast('Ausgabe gespeichert')
     $('#save_cash').hide();
@@ -213,7 +230,7 @@ $.fn.toast = function(text) {
     }, 5000);
 };
 $(document).on('click', function() {
-    if (navpos.length > 1) {
+    if(navpos.length > 1) {
         $('.ret').addClass('show');
     } else {
         $('.ret').removeClass('show');
