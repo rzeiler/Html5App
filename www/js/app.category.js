@@ -1,34 +1,35 @@
 var currentData, currentHtml, openCaregoryId, openCashId;
 $(document).on('CreateCategoryList', function(e, json, isSearch) {
     $('#list').html('');
-    if(isSearch === false) {
+    console.log(e, json, isSearch);
+    if(isSearch == false) {
         currentData = json.data;
         console.log("init data", currentData);
     }
     /* load template */
-    $.get("template/categoryItem.html", function(html) {
+    $.get("template/categoryListItem.html", function(html) {
         $.each(json.data, function(key, item) {
+            console.log(item,"write");
             var s = $(html);
             try {
-                s.find(".w2 .fab").text(item.title.substring(0, 1));
-                s.find("h4").text(item.title);
+                s.find(".circle").text(item.title.substring(0, 1));
+                s.find(".title").text(item.title);
                 s.find("p").text(item.sum);
                 s.find(".edit_category").data('id', item.id);
                 s.find(".open_cashs").data('id', item.id);
-                var str = s.find(".w2 .fab").text();
-                var l = s.find(".w2 .fab").text().toLowerCase();
+                var l = s.find(".circle").text().toLowerCase();
                 var c = $.grep(colorData, function(n, i) {
                     return l === n.letter;
                 });
-                s.find(".w2 .fab").css('background-color', c[0].color);
+                s.find(".circle").css('background-color', c[0].color);
             } catch(e) {
                 s = e;
             } finally {
                 /* show */
-                $('#list').append(s);
+                $('.collection').append(s);
             }
         });
-        AnimateSection();
+
     });
     $('#a').css('width', '36%');
     $('#b').css('width', '76%');
@@ -46,7 +47,7 @@ $(document).on('keyup', '.categorys_filter', function() {
     }
     $(document).trigger('CreateCategoryList', [{
         data: as
-    }, false]);
+    }, true]);
 });
 $(document).on('click', '#open_categorys', function() {
     openCaregoryId = 0;

@@ -16,7 +16,7 @@ $(document).on('databaseready', function() {
     // $('.edit_category').trigger('click');
 });
 $(document).on('click', '.ret', function() {
-    if (navpos.length > 1) {
+    if(navpos.length > 1) {
         var o = navpos[navpos.length - 2];
         $(o).trigger('click');
     }
@@ -25,7 +25,7 @@ $(document).on('click', '.ret', function() {
 function AddNavigtionPoint(v) {
     console.log('AddNavigtionPoint');
     var a = navpos.indexOf(v);
-    if (a == -1) {
+    if(a == -1) {
         navpos.push(v);
     } else {
         navpos.length = a + 1;
@@ -34,7 +34,7 @@ function AddNavigtionPoint(v) {
     $.each(navpos, function(i, v) {
         console.log(i, v);
         var a = $("<span/>");
-        if (v.indexOf('#') == 0) {
+        if(v.indexOf('#') == 0) {
             a.attr('id', v.substring(1));
         } else {
             a.attr('class', v.substring(1));
@@ -44,7 +44,6 @@ function AddNavigtionPoint(v) {
     });
 }
 var currentData, currentHtml, openCaregoryId, openCashId;
- 
 
 function toListCash(data) {
     $('#list').html('');
@@ -66,7 +65,7 @@ function toListCash(data) {
 $(document).on('keyup', '.cashs_filter', function() {
     var val = $(this).val();
     var as = currentData;
-    if (val != "") {
+    if(val != "") {
         as = $.grep(currentData, function(n, i) {
             var t = n.title.toLowerCase();
             var f = val.toLowerCase();
@@ -75,7 +74,6 @@ $(document).on('keyup', '.cashs_filter', function() {
     }
     toListCash(as);
 });
-
 $(document).on('click', '.open_cashs', function() {
     AnimateSection();
     openCaregoryId = ($(this).data('id') != null) ? $(this).data('id') : openCaregoryId;
@@ -102,7 +100,6 @@ $(document).on('click', '.open_cashs', function() {
         });
     });
 });
-
 $(document).on('click', '.edit_cash', function() {
     AddNavigtionPoint('.edit_cash');
     $('#save_cash').show();
@@ -134,16 +131,10 @@ $(document).on('click', '#save_cash', function() {
 /* global functions */
 var myVar;
 $.fn.toast = function(text) {
-    var toast = this;
-    clearTimeout(myVar);
-    toast.find('p').text(text);
-    toast.addClass('active')
-    myVar = setTimeout(function() {
-        toast.removeClass('active');
-    }, 5000);
+    Materialize.toast(text, 5500);
 };
 $(document).on('click', function() {
-    if (navpos.length > 1) {
+    if(navpos.length > 1) {
         $('.ret').addClass('show');
     } else {
         $('.ret').removeClass('show');

@@ -1,0 +1,50 @@
+a.myfab {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+}
+
+.btn-floating.btn-large.myfab i {
+  line-height: 64px;
+  font-size: 250%;
+}
+
+.brad {
+    display: none;
+}
+
+nav ul.left a {
+    font-size: 160%;
+}
+
+nav ul, nav i, nav i, nav [class^="mdi-"], nav [class*="mdi-"], nav i.material-icons {
+    line-height: 64px;
+}
+
+.ret {
+    width: 0px;
+    font-size: 0%;
+    overflow: hidden;
+    padding: 0px;
+    transition: all .2s;
+    text-align: center;
+}
+
+.ret.show {
+    font-size: 120%;
+    padding-left: 10px;
+    width: inherit;
+}
+
+.collection {
+    border-style: none !important;
+    border-radius: 0px !important;
+}
+
+.collection .collection-item.avatar .circle {
+    text-align: center !important;
+    line-height: 52px;
+    font-size: 200%;
+    color: #fff !important;
+    border-style: none !important;
+}

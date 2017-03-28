@@ -1,6 +1,6 @@
 .bar {
     height: 10px;
-    background-color: #666;
+   
     display: block;
     margin: 8px;
 }
@@ -8,7 +8,7 @@
 .bar>.line {
 	  transition: all 1s ease-in-out;
     height: 100%;
-    background-color: #FF9F1E;
+
     display: block;
     width: 0%;
 }
