@@ -9,13 +9,9 @@ $(document).on('deviceready', function() {
 });
 /* run app with database */
 $(document).on('databaseready', function() {
-    console.log('databaseready');
     $('#open_categorys').trigger('click');
-    //$('#open_settings').trigger('click');
-    // openCaregoryId = 0;
-    // $('.edit_category').trigger('click');
 });
-$(document).on('click', '.ret', function() {
+$(document).on('click', '.left', function() {
     if(navpos.length > 1) {
         var o = navpos[navpos.length - 2];
         $(o).trigger('click');

@@ -3,6 +3,7 @@
 var myDB = null;
 try {
     $(document).on('deviceready', function() {
+
         myDB = window.sqlitePlugin.openDatabase({
             name: "fmhpro.db",
             location: 'default'
@@ -30,28 +31,31 @@ try {
             document.dispatchEvent(event);
         }
     });
-    $(document).on('click', '#save_category', function() {
-        var title = $('#title').val();
-        var createdate = toTimestamp($('#date').val());
-        var isdeleted = 0;
-        var user = 'rze';
-        var rating = 1;
+
+    $(document).on('savingCategory', function(e, data) {
         myDB.transaction(function(transaction) {
-            console.log(title, createdate, isdeleted, user, rating);
-            var executeQuery = "INSERT INTO category (title, createdate, isdeleted, user, rating) VALUES (?,?,?,?,?)";
-            transaction.executeSql(executeQuery, [title, createdate, isdeleted, user, rating], function(tx, result) {
-                alert('Inserted');
-                console.log(result);
-                $("#toast").toast(result);
-                $('#save_category').hide();
-                $('#open_categorys').trigger('click');
+            var executeQuery = "",
+                params = [];
+            if (data.id == null) {
+                executeQuery = "INSERT INTO category (title, createdate, user, rating) VALUES (?,?,?,?)";
+                params = [data.title, data.createdate, data.user, data.rating];
+            } else {
+                executeQuery = "UPDATE category SET title=?, createdate=?, user=?, rating=? WHERE id=?";
+                params = [data.title, data.createdate, data.user, data.rating, data.id];
+            }
+            transaction.executeSql(executeQuery, params, function(tx, result) {
+                 $(document).trigger('categorySaved', [{
+                    info: 'save'
+                }]);
             }, function(error) {
-                alert(error);
-                console.log(error);
-                result = 'Error occurred';
+                $(document).trigger('categorySaved', [{
+                    info: error
+                }]);
             });
         });
     });
+
+
     $(document).on('getcategorys', function() {
         myDB.transaction(function(transaction) {
             transaction.executeSql('SELECT * FROM category', [], function(tx, results) {
@@ -65,12 +69,7 @@ try {
                     var d = date.getDate();
                     var m = "0" + date.getMonth();
                     var y = "0" + date.getYear();
-                    var formattedTime = d + "." + m + "." + y;
-                     formattedTime = date.toLocaleDateString();
-
-
-                  //  formattedTime = date.toISOString();
-                    console.log(formattedTime);
+                    var formattedTime = y + "-" + m + "-" + d;
                     results.rows.item(i).createdate = formattedTime;
                     data.push(results.rows.item(i));
                 }
