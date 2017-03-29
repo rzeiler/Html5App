@@ -116,8 +116,28 @@ $(document).on('click', '#open_settings', function() {
 });
 
 function toTimestamp(strDate) {
-    var datum = Date.parse(strDate);
-    return datum / 1000;
+    /* 2017-12-01 */
+    console.log("toTimestamp", strDate);
+    var d = new Date(strDate);
+    console.log("toTimestamp", d);
+    var t = d.getTime() / 1000;
+    console.log("toTimestamp", t);
+    return t;
+}
+
+function toDate(iDate) {
+    /* 1490745600 */
+    console.log("toDate", iDate);
+    iDate = parseInt(iDate) * 1000;
+    var date = new Date(iDate);
+    console.log("toDate", date);
+    var d = (date.getDate() > 9) ? date.getDate() : "0" + date.getDate();
+    var m = (date.getMonth() + 1);
+    m = (m > 9) ? m : "0" + m;
+    var y = date.getFullYear();
+    var t = y + "-" + m + "-" + d;
+    console.log("toDate", t);
+    return t;
 }
 $(document).on('click', '#save_cash', function() {
     $("#toast").toast('Ausgabe gespeichert')

@@ -62,13 +62,25 @@ nav .title small {
     width: 40px;
     height: 40px;
     line-height: 45px;
+    display: block;
     color: #fff;
     text-align: center;
 }
 
-.fw {
-    display: block;
-    width: 100%;
-    height: 100%;
-    padding: 10px;
+.right li {
+    opacity: 0;
+    width: 0px;
+    font-size: 0%;
+    overflow: hidden;
+    padding: 0px;
+    transition: all .7s;
+    text-align: center;
+    margin-left: -50%;
+}
+
+.right li.show {
+    opacity: 1;
+    padding-left: 10px;
+    width: inherit;
+    margin-left: 0%;
 }

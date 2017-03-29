@@ -3,7 +3,6 @@
 var myDB = null;
 try {
     $(document).on('deviceready', function() {
-
         myDB = window.sqlitePlugin.openDatabase({
             name: "fmhpro.db",
             location: 'default'
@@ -24,19 +23,18 @@ try {
                 alert("Error occurred while creating the table.");
             });
         });
-        if (myDB != null) {
+        if(myDB != null) {
             var event = new CustomEvent("databaseready", {
                 "detail": "fmhpro"
             });
             document.dispatchEvent(event);
         }
     });
-
     $(document).on('savingCategory', function(e, data) {
         myDB.transaction(function(transaction) {
             var executeQuery = "",
                 params = [];
-            if (data.id == null) {
+            if(data.id == null) {
                 executeQuery = "INSERT INTO category (title, createdate, user, rating) VALUES (?,?,?,?)";
                 params = [data.title, data.createdate, data.user, data.rating];
             } else {
@@ -44,7 +42,7 @@ try {
                 params = [data.title, data.createdate, data.user, data.rating, data.id];
             }
             transaction.executeSql(executeQuery, params, function(tx, result) {
-                 $(document).trigger('categorySaved', [{
+                $(document).trigger('categorySaved', [{
                     info: 'save'
                 }]);
             }, function(error) {
@@ -54,8 +52,6 @@ try {
             });
         });
     });
-
-
     $(document).on('getcategorys', function() {
         myDB.transaction(function(transaction) {
             transaction.executeSql('SELECT * FROM category', [], function(tx, results) {
@@ -63,13 +59,9 @@ try {
                 var len = results.rows.length,
                     i;
                 'title, createdate, isdeleted, user, rating'
-                for (i = 0; i < len; i++) {
+                for(i = 0; i < len; i++) {
                     var createdate = results.rows.item(i).createdate;
-                    var date = new Date(createdate * 1000);
-                    var d = date.getDate();
-                    var m = "0" + date.getMonth();
-                    var y = "0" + date.getYear();
-                    var formattedTime = y + "-" + m + "-" + d;
+                    var formattedTime = toDate(createdate);
                     results.rows.item(i).createdate = formattedTime;
                     data.push(results.rows.item(i));
                 }
@@ -82,7 +74,6 @@ try {
             });
         });
     });
-
-} catch (e) {
+} catch(e) {
     alert(e);
 } finally {}
