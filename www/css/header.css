@@ -4,73 +4,47 @@ header {
     position: fixed;
     left: 0;
     top: 0;
-    border-bottom: 1px solid #2D222D;
-    border-top: 1px solid #2D222D;
     overflow: hidden;
     width: 100%;
     padding: 0;
+        height: 60px;
 }
-
-header .td {
-    vertical-align: middle;
-    height: 50px;
-}
-
-header .td a {
-    padding: 20px 15px;
-}
-
-div.td.ret {
-    width: 0px;
-    font-size: 0%;
-    overflow: hidden;
-    padding: 0px;
-    transition: all .2s;
-    /*transition: width .5s, font-size 2s;*/
-    text-align: center;
-}
-
-div.td.ret.show {
-    font-size: 200%;
-    padding-left: 10px;
-}
-
-div.td.ret:active {
-    background-color: #555;
-}
-
-header b {
-    padding: 0px 10px;
-    margin: 0px;
-    display: block;
-}
-
-header small {
-    font-weight: lighter;
-    font-size: 80%;
-    padding: 0px 10px;
-    display: block;
-}
-
 .brad {
     display: none;
 }
 
-header div.ar {
-    text-align: right;
+#go_back {
+    padding: 20px 0px 20px 20px;
 }
 
-header div.ar a {
+header span.title {
+    display: inline;
+    padding: 17px;
+}
+
+header span.title small {
+    font-weight: lighter;
+    font-size: 80%;
+    display: block;
+}
+
+header .left {
+    float: left;
+}
+
+header .right {
+    float: right;
+}
+
+header a.option {
+    opacity: 0;
     display: none;
-    width: 0px;
-    overflow: hidden;
-    padding: 0px;
-    transition: all .2s;
+    padding: 20px;
+    transition: opacity .5s;
     text-align: center;
 }
 
-header div.ar a.show {
-    width: inherit;
-    padding: 10px;
+header a.option.show {
+    opacity: 1;
     display: inline;
 }

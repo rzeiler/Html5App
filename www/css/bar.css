@@ -1,14 +1,28 @@
 .bar {
-    height: 10px;
-   
+    height: 7px;
     display: block;
     margin: 8px;
 }
 
 .bar>.line {
-	  transition: all 1s ease-in-out;
+    transition: all 1s ease-in-out;
     height: 100%;
-
     display: block;
     width: 0%;
+}
+
+#a {
+    background-color: #2196f3;
+}
+
+#a .line {
+    background-color: #bbdefb;
+}
+
+#b {
+    background-color: #2196f3;
+}
+
+#b .line {
+    background-color: #bbdefb;
 }

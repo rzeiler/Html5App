@@ -1,19 +1,27 @@
-<div class="row  blue-grey lighten-5">
-    <div class="col s12"><input type="text" class="categorys_filter" placeholder="Suchen"></div>
-    <div class="col s6">
-        <div class="progress blue lighten-4" id="a">
-            <div class="determinate  blue darken-1" style="width: 30%"></div>
-        </div>
-    </div>
-    <div class="col s6">
-        <div class="progress blue lighten-4" id="b">
-            <div class="determinate  blue darken-1" style="width: 70%"></div>
+<div class="table grey">
+    <div class="tr">
+        <div class="td">
+            <input type="text" class="categorys_filter" placeholder="Suchen">
         </div>
     </div>
 </div>
-<div id="list">
+<div class="table grey">
+    <div class="tr">
+        <div class="td">
+            <div class="bar" id="b">
+                <div class="line" style="width: 0%"></div>
+            </div>
+        </div>
+        <div class="td">
+            <div class="bar" id="a">
+                <div class="line" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="table" id="list">
     <!-- placholder -->
 </div>
-<a class="btn-floating btn-large waves-effect waves-light red edit_category myfab">
+<a class="edit_category fab">
     <i class="material-icons">add</i>
 </a>

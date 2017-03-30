@@ -1,62 +1,19 @@
-#list {
-    padding: 0;
-    margin: 0;
+.circle {
+    height: 45px;
+    width: 45px;
     display: block;
-    overflow: hidden;
-
-
-}
-
-li {
-    background-color: #FFFFFF;
-    list-style: none;
-    height: 0;
-    line-height: 2em;
-    overflow: hidden;
-    display: block;
-    margin: 0;
-}
-
-li.show {
-    height: 100%;
-    margin: 0 0 0 0;
-}
-
-.slide-fade li {
-    transition: all 0.5s ease-in-out;
-    opacity: 0;
-    margin: 0 0 0 -200%;
-}
-
-.slide-fade li.show {
-    margin: 0 0 0 0px;
-    opacity: 1;
+    border-radius: 50%;
+    text-align: center;
+    color: #fff;
+    font-size: 150%;
+    line-height: 57px;
+    margin: auto;
 }
 
 #list .td {
-    vertical-align: middle;
+    padding: 8px;
 }
 
-#list .td.w2 {
-    text-align: center;
-
-
-    font-size: 200%;
-}
-
-#list.cashs .td.w2 {
-    text-align: center;
-
-    font-size: 100%;
-}
-
-#list .fab{
-  padding: 12px;
-  margin: 10px;
-  border-radius: 100px;
-  color:#fff;
-}
-
-#list .td.w7{
-  padding: 3px 3px 3px 10px;
+#list .td.s2 {
+    width: 60px;
 }

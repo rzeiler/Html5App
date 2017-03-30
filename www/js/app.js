@@ -12,16 +12,16 @@ $(document).on('databaseready', function() {
     $('#open_categorys').trigger('click');
 });
 $(document).on('click', '.back', function() {
-    if(navpos.length > 1) {
+    if (navpos.length > 1) {
         var o = navpos[navpos.length - 2];
         $(o).trigger('click');
     }
 });
 
 function AddNavigtionPoint(v) {
-    console.log('AddNavigtionPoint');
+    $('a.option').removeClass('show');
     var a = navpos.indexOf(v);
-    if(a == -1) {
+    if (a == -1) {
         navpos.push(v);
     } else {
         navpos.length = a + 1;
@@ -30,7 +30,7 @@ function AddNavigtionPoint(v) {
     $.each(navpos, function(i, v) {
         console.log(i, v);
         var a = $("<span/>");
-        if(v.indexOf('#') == 0) {
+        if (v.indexOf('#') == 0) {
             a.attr('id', v.substring(1));
         } else {
             a.attr('class', v.substring(1));
@@ -38,6 +38,12 @@ function AddNavigtionPoint(v) {
         a.text(v);
         $('.brad').append(a);
     });
+
+    if (navpos.length > 1) {
+        $('#go_back').addClass('show');
+    } else {
+        $('#go_back').removeClass('show');
+    }
 }
 var currentData, currentHtml, openCaregoryId, openCashId;
 
@@ -61,7 +67,7 @@ function toListCash(data) {
 $(document).on('keyup', '.cashs_filter', function() {
     var val = $(this).val();
     var as = currentData;
-    if(val != "") {
+    if (val != "") {
         as = $.grep(currentData, function(n, i) {
             var t = n.title.toLowerCase();
             var f = val.toLowerCase();
@@ -71,12 +77,11 @@ $(document).on('keyup', '.cashs_filter', function() {
     toListCash(as);
 });
 $(document).on('click', '.open_cashs', function() {
-    AnimateSection();
+
     openCaregoryId = ($(this).data('id') != null) ? $(this).data('id') : openCaregoryId;
     AddNavigtionPoint('.open_cashs');
-    $('#open_settings').show();
-    $('#save_cash').hide();
-    $("header h2").text('Ausgaben');
+    $('#open_settings').addClass('show');
+    $("header .title b").text('Ausgaben');
     $('body').removeClass('gray');
     $("main").load("template/cashs.html", function() {
         AnimateMain();
@@ -98,8 +103,8 @@ $(document).on('click', '.open_cashs', function() {
 });
 $(document).on('click', '.edit_cash', function() {
     AddNavigtionPoint('.edit_cash');
-    $('#save_cash').show();
-    $("header h2").text('Bearbeiten');
+
+    $("header .title b").text('Bearbeiten');
     $('body').addClass('gray');
     $("main").load("template/cash.html", function() {
         AnimateMain();
@@ -107,8 +112,8 @@ $(document).on('click', '.edit_cash', function() {
 });
 $(document).on('click', '#open_settings', function() {
     AddNavigtionPoint('#open_settings');
-    $('#open_settings').hide();
-    $("header h2").text('Einstellungen');
+
+    $("header .title b").text('Einstellungen');
     $('body').addClass('gray');
     $("main").load("template/settings.html", function() {
         AnimateMain();
@@ -141,21 +146,21 @@ function toDate(iDate) {
 }
 $(document).on('click', '#save_cash', function() {
     $("#toast").toast('Ausgabe gespeichert')
-    $('#save_cash').hide();
+    $('#save_cash').removeClass('show');
     $('.open_cashs').trigger('click');
 });
 /* global functions */
 var myVar;
 $.fn.toast = function(text) {
-    Materialize.toast(text, 5500);
+    var toast = this;
+    clearTimeout(myVar);
+    toast.find('p').text(text);
+    toast.addClass('active')
+    myVar = setTimeout(function() {
+        toast.removeClass('active');
+    }, 5000);
 };
-$(document).on('click', function() {
-    if(navpos.length > 1) {
-        $('.ret').addClass('show');
-    } else {
-        $('.ret').removeClass('show');
-    }
-});
+
 /* animate section element */
 function AnimateSection() {
     $('#list li').each(function(i) {
