@@ -11,7 +11,7 @@ $(document).on('deviceready', function() {
 $(document).on('databaseready', function() {
     $('#open_categorys').trigger('click');
 });
-$(document).on('click', '.left', function() {
+$(document).on('click', '.back', function() {
     if(navpos.length > 1) {
         var o = navpos[navpos.length - 2];
         $(o).trigger('click');

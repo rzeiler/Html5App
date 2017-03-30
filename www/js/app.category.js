@@ -49,7 +49,7 @@ $(document).on('keyup', '.categorys_filter', function() {
 $(document).on('click', '#open_categorys', function() {
     openCaregoryId = 0;
     AddNavigtionPoint('#open_categorys');
-    $('.right li').removeClass('show');
+    $('div.ar a').removeClass('show');
     $('#open_settings').addClass('show');
     $("header .title b").text('Kategorien');
     $('body').removeClass('grey lighten-4');
@@ -80,7 +80,7 @@ $(document).on('click', '#save_category', function() {
 /* edit category */
 $(document).on('click', '.edit_category', function() {
     AddNavigtionPoint('.edit_category');
-    $('.right li').removeClass('show');
+    $('div.ar a').removeClass('show');
     $('#save_category').addClass('show');
     $('body').addClass('grey lighten-4');
     openCaregoryId = $(this).data('id');
@@ -105,7 +105,6 @@ $(document).on('click', '.edit_category', function() {
             date.val(d[0].createdate);
             rating.val(d[0].rating);
         }
-        Materialize.updateTextFields();
-        $('select').material_select();
+      
     });
 });
