@@ -1,12 +1,12 @@
 .alert {
+    opacity: 0;
     top: 0px;
     left: 0px;
     right: 0px;
-    bottom: 0px;
-    display: none;
+    bottom: 100%;
     position: absolute;
     background-color: rgba(0, 0, 0, 0.5);
-    transition: all 1s;
+    transition: all .5s;
 }
 
 .alert .box {
@@ -15,24 +15,31 @@
     background-color: #2F323F;
     color: #fff;
     text-align: center;
-    margin: -100%;
-    transition: all 1s;
+    margin: -150% auto;
+    transition: all 1.5s;
 }
 
 .alert .box.boxfull {
-    width: 80%;
-    height: 80%;
+    padding: 0;
+    width: 90%;
+    height: 90%;
     background-color: #fff;
     color: #2F323F;
 }
 
+.alert .box.boxfull .tr.options {
+    height: 50px;
+}
+
 .alert.show {
-    display: block;
+    bottom: 0px;
+    opacity: 1;
 }
 
 .alert.show .box.boxfull {
     margin: 10% auto;
 }
+
 .alert.show .box {
     margin: 20% auto;
 }
@@ -48,6 +55,12 @@
 .alert .box .options {
     background-color: #2F323F;
     border-top: 2px solid #4af;
+    color: #FFF;
+}
+
+.alert .box .options .td {
+    vertical-align: middle;
+    height: 50px;
 }
 
 .alert .box .options button {
@@ -56,4 +69,16 @@
     color: #fff;
     width: 48%;
     padding: 10px;
+}
+
+.alert #list a {
+    text-align: left;
+    display: block;
+    padding: 20px;
+    transition: all .2s;
+}
+
+.alert #list a:active {
+    background-color: #2F323F;
+    color: #fff;
 }

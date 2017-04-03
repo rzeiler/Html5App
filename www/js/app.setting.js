@@ -8,7 +8,9 @@ $(document).on('deviceready', function() {
         fileExplorer = $(html);
         $('body').append(fileExplorer);
         console.log('fileExplorer create');
+
     });
+
 });
 $(document).on('filesToList', function(e, json) {
     console.log('filesToList', json);
@@ -17,13 +19,18 @@ $(document).on('filesToList', function(e, json) {
     });
 });
 $(document).on('click', 'a.dir', function() {
-    $(document).trigger('getFiles', ["/", fileDirectory]);
+
+    var path = $(this).data('path');
+    $(document).trigger('getFiles', [path, fileDirectory]);
 });
 /* rebuild data */
 $(document).on('click', '.findFile', function() {
+    $('#fileExplorer #list').html("");
     $('#fileExplorer').addClass('show');
-    var root = $("<a>Öffnen</a>");
-    root.data('path', '/');
-    root.addClass('dir');
-    $('#fileExplorer #list').append(root);
+   
+    $(document).trigger('getFiles');
+});
+/* close explorer */
+$(document).on('click', '#fileExplorer #close', function() {
+    $('#fileExplorer').removeClass('show');
 });
