@@ -19,10 +19,20 @@
     transition: all 1s;
 }
 
+.alert .box.boxfull {
+    width: 80%;
+    height: 80%;
+    background-color: #fff;
+    color: #2F323F;
+}
+
 .alert.show {
     display: block;
 }
 
+.alert.show .box.boxfull {
+    margin: 10% auto;
+}
 .alert.show .box {
     margin: 20% auto;
 }
