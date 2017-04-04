@@ -38,6 +38,7 @@
 
 .alert.show .box.boxfull {
     margin: 10% auto;
+    overflow: hidden;
 }
 
 .alert.show .box {
@@ -81,4 +82,9 @@
 .alert #list a:active {
     background-color: #2F323F;
     color: #fff;
+}
+
+div#list {
+    height: 100%;
+    overflow: auto;
 }

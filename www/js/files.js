@@ -1,42 +1,59 @@
-$(document).on('getFiles', function(e) {
+var sdcard;
 
-  window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSystem) {
-          var sdcard = fileSystem.root;
-            alert("run");
-          // $(document).on('click', 'a.file', function() {
-          //     var path = $(this).data('path');
-          //     window.resolveLocalFileSystemURL("file:///sdcard/" + path, readFile, onErrorReadFile);
-          // });
-          $(document).on('click', 'a.dir', function() {
-              alert("ok run 2");
-              var path = $(this).data('path');
-              sdcard.getDirectory(path, {
-                      create: false
-                  }, function(dcim) {
-                      var directoryReader = dcim.createReader();
-                      directoryReader.readEntries(function(entries) {
-                              $("#list").html("");
-                              dcim.getParent(function(parent) {
-                                  $("#list").prepend(" <a class='dir' data-path='" + parent.fullPath + "' >..</a>");
-                              }, function(error) {
-                                  $("#list").html(error.code);
-                              });
-                              for (i = 0; i < entries.length; i++) {
-                                  $("#list").prepend(" <a class='" + ((entries[i].isDirectory) ? "dir" : "file") + "' data-path='" + entries[i].fullPath + "' >" + entries[i].name + "</a></li>");
-                              }
-                          },
-                          function(e) {
-                              $("#list").html(e.code);
-                          });
-                  },
-                  function(error) {
-                      $("#list").html(error.code);
-                  });
-          });
-      },
-      function(evt) { // error get file system
-          $("#list").html(evt.target.error.code);
-      });
+function readFile(fileEntry) {
+    fileEntry.file(function(file) {
+        var reader = new FileReader();
+        reader.onloadend = function() {
+            $(document).trigger('fileSelected', [{
+                text: this.result
+            }]);
+        };
+        reader.readAsText(file);
+    }, onErrorReadFile);
+}
 
+ 
 
+function fail(evt) {
+    alert(evt.target.error.code);
+}
+$(document).on('getJsonFile', function(e) {
+    $('#fileExplorer #list').html("loading");
+    window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSystem) {
+        $('#fileExplorer #list').html("loading...");
+        sdcard = fileSystem.root;
+        $(document).on('click', 'a.file', function() {
+            var path = $(this).data('path');
+            window.resolveLocalFileSystemURL("file:///sdcard/" + path, readFile, fail);
+        });
+        var btn = $("<a class='dir' data-path='/'>Root</a>");
+        $('#fileExplorer #list').append(btn);
+        $(document).on('click', 'a.dir', function() {
+            var path = $(this).data('path');
+            console.log(path);
+            $("#list").html("");
+            sdcard.getDirectory(path, {
+                create: false
+            }, function(dcim) {
+                $('#fileExplorer #list').html("");
+                var directoryReader = dcim.createReader();
+                directoryReader.readEntries(function(entries) {
+                    $("#list").html("");
+                    dcim.getParent(function(parent) {
+                        $('#fileExplorer #list').prepend(" <a class='dir' data-path='" + parent.fullPath + "' >..</a>");
+                    }, function(error) {
+                        console.log(error);
+                    });
+                    for(i = 0; i < entries.length; i++) {
+                        $('#fileExplorer #list').prepend(" <a class='" + ((entries[i].isDirectory) ? "dir" : "file") + "' data-path='" + entries[i].fullPath + "' >" + entries[i].name + "</a>");
+                    }
+                }, function(e) {
+                    console.log(e);
+                });
+            }, function(error) {
+                console.log(error);
+            });
+        });
+        btn.trigger("click");
+    }, fail);
 });
