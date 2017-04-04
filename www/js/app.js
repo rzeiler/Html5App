@@ -47,23 +47,7 @@ function AddNavigtionPoint(v) {
 }
 var currentData, currentHtml, openCaregoryId, openCashId;
 
-function toListCash(data) {
-    $('#list').html('');
-    $.each(data, function(key, val) {
-        var s = $(currentHtml);
-        s.find(".w2").text(val.sum);
-        s.find("h4").text(val.title);
-        s.find("p").text(val.date);
-        s.find(".edit_category").data('id', val.id);
-        var str = s.find(".w2").text();
-        var c = $.grep(colorData, function(n, i) {
-            return l == n.letter;
-        });
-        s.find(".w1").css('background-color', c[0].color);
-        $('#list').append(s);
-    });
-    AnimateSection();
-}
+
 $(document).on('keyup', '.cashs_filter', function() {
     var val = $(this).val();
     var as = currentData;
@@ -76,31 +60,7 @@ $(document).on('keyup', '.cashs_filter', function() {
     }
     toListCash(as);
 });
-$(document).on('click', '.open_cashs', function() {
 
-    openCaregoryId = ($(this).data('id') != null) ? $(this).data('id') : openCaregoryId;
-    AddNavigtionPoint('.open_cashs');
-    $('#open_settings').addClass('show');
-    $("header .title b").text('Ausgaben');
-    $('body').removeClass('gray');
-    $("main").load("template/cashs.html", function() {
-        AnimateMain();
-        var tmplate;
-        $.get("template/cashItem.html", function(html) {
-            template = html;
-            $.getJSON("data/cash.json", function(data) {
-                currentData = $.grep(data, function(n, i) {
-                    return n.id === openCaregoryId;
-                });
-                currentHtml = html;
-                toListCash(currentData);
-            });
-            AnimateSection();
-            $('#a').css('width', '66%');
-            $('#b').css('width', '26%');
-        });
-    });
-});
 $(document).on('click', '.edit_cash', function() {
     AddNavigtionPoint('.edit_cash');
 
@@ -132,16 +92,14 @@ function toTimestamp(strDate) {
 
 function toDate(iDate) {
     /* 1490745600 */
-    console.log("toDate", iDate);
     iDate = parseInt(iDate) * 1000;
     var date = new Date(iDate);
-    console.log("toDate", date);
     var d = (date.getDate() > 9) ? date.getDate() : "0" + date.getDate();
     var m = (date.getMonth() + 1);
     m = (m > 9) ? m : "0" + m;
     var y = date.getFullYear();
     var t = y + "-" + m + "-" + d;
-    console.log("toDate", t);
+    date = null;
     return t;
 }
 $(document).on('click', '#save_cash', function() {

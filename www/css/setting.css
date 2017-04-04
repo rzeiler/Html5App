@@ -1,0 +1,10 @@
+.settings a {
+    padding: 20px;
+    background-color: #fff;
+    color: #2F323F;
+}
+
+.settings a:hover {
+    background-color: #2F323F;
+    color: #fff;
+}
