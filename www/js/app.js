@@ -2,15 +2,12 @@ const navpos = new Array();
 var colorData;
 /* get color */
 $(document).on('deviceready', function() {
-    $.getJSON("data/color.json", function(data) {
-        colorData = data;
-        console.log("color ready", colorData);
-    });
+  
 });
 /* run app with database */
-$(document).on('StartApp', function() {
-    $('#open_categorys').trigger('click');
-});
+
+
+
 $(document).on('click', '.back', function() {
     if(navpos.length > 1) {
         var o = navpos[navpos.length - 2];

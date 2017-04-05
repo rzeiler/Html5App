@@ -1,4 +1,20 @@
-var openCaregoryId, cashId, item = "";
+var openCaregoryId = null,
+    cashId = null,
+    item = null,
+    list = null,
+    form = null;
+
+$(document).on('sqliteready', function() {
+    $.get("template/cash/view.html", function(html) {
+        item = html;
+    });
+    $.get("template/cash/list.html", function(html) {
+        list = html;
+    });
+    $.get("template/cash/form.html", function(html) {
+        form = html;
+    });
+});
 
 function CashToList(data) {
     //content, createdate, category, repeat, total, iscloned, category
@@ -17,23 +33,15 @@ $(document).on('click', '.open_cashs', function() {
     $('#open_settings').addClass('show');
     $("header .title b").text('Ausgaben');
     $('body').removeClass('grey');
-    $("main").load("template/cash/list.html", function() {
-        $('#list').html('');
-        $.get("template/cash/view.html", function(html) {
-            item = html;
-            CashesToListById(openCaregoryId, CashToList, null);
-        });
-    });
+    $('main').html(list)
+    CashesToListById(openCaregoryId, CashToList, null);
 });
-
-
 /* filter list */
 $(document).on('keyup', '.cashs_filter', function() {
     var val = $(this).val();
     $('#list').html('');
     CashesToListById(openCaregoryId, CashToList, val);
 });
-
 /* save data */
 $(document).on('click', '#save_cash', function() {
     if (myDB != null) {
@@ -65,16 +73,15 @@ $(document).on('click', '.edit_cash', function() {
     $("header .title b").text('Bearbeiten');
     $('body').addClass('grey');
     $('#save_cash').addClass('show');
-    $("main").load("template/cash/form.html", function() {
-        if (cashId != undefined || cashId != null) {
-            myDB.transaction(function(transaction) {
-                GetCashById(transaction, cashId, function(item) {
-                    $('#date').val(toDate(item.createdate));
-                    $('#content').val(item.content);
-                    $('#repeat').val(item.repeat);
-                    $('#total').val(item.total);
-                });
+    $("main").html(form);
+    if (cashId != undefined || cashId != null) {
+        myDB.transaction(function(transaction) {
+            GetCashById(transaction, cashId, function(item) {
+                $('#date').val(toDate(item.createdate));
+                $('#content').val(item.content);
+                $('#repeat').val(item.repeat);
+                $('#total').val(item.total);
             });
-        }
-    });
+        });
+    }
 });

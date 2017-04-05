@@ -18,7 +18,7 @@ function InitDatabaseSystem() {
             console.log('cash', result);
         }, fail);
     });
-    $(document).trigger('StartApp');
+    $(document).trigger('sqliteready');
 }
 $(document).on('savingCategory', function(e, data) {
     myDB.transaction(function(transaction) {
@@ -42,28 +42,29 @@ $(document).on('savingCategory', function(e, data) {
         });
     });
 });
-$(document).on('getcategorys', function() {
+
+
+function CategorysToListByUser(user, callback, search) {
     myDB.transaction(function(transaction) {
-        transaction.executeSql('SELECT * FROM category', [], function(tx, results) {
-            var data = [];
+        var query = 'SELECT * FROM category WHERE user=? LIMIT ?',
+            params = [user, 150];
+        if (search != null && search.length > 0) {
+            query = "SELECT * FROM category WHERE user=? AND (title LIKE ? OR title LIKE ?) LIMIT ?";
+            params = [user, "%" + search + "%", search + "%", 100];
+        }
+        transaction.executeSql(query, params, function(tx, results) {
             var len = results.rows.length,
                 i;
-            'title, createdate, isdeleted, user, rating'
             for (i = 0; i < len; i++) {
-                var createdate = results.rows.item(i).createdate;
-                var formattedTime = toDate(createdate);
-                results.rows.item(i).createdate = formattedTime;
-                data.push(results.rows.item(i));
+                var item = results.rows.item(i);
+                var d = new Date(item.createdate * 1000);
+                item.createdate = d.toLocaleDateString();
+                callback(item);
+                item = null;
             }
-            $(document).trigger('CreateCategoryList', [{
-                data: data
-            }, false]);
-        }, function(error) {
-            console.log(error);
-            result = 'Error SELECT';
-        });
+        }, fail);
     });
-});
+}
 
 function CashesToListById(id, callback, search) {
     myDB.transaction(function(transaction) {
@@ -89,6 +90,7 @@ function CashesToListById(id, callback, search) {
 
 function fail(tx, e) {
     console.log("fail", e, e.message);
+    alert(e.message);
     return null;
 }
 

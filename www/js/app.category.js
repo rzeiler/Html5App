@@ -1,57 +1,46 @@
 var currentData, currentHtml, openCaregoryId, openCashId;
-$(document).on('CreateCategoryList', function(e, json, isSearch) {
-    $('#list').html("");
-    console.log("CreateCategoryList", e, json, isSearch);
-    if(isSearch == false) {
-        currentData = json.data;
-    }
-    /* load template */
-    $.get("template/categoryListItem.html", function(html) {
-        $.each(json.data, function(key, item) {
-            var s = $(html);
-            try {
-              try {
-                      s.find(".circle").text(item.title.substring(0, 1));
-              } catch (e) {
+var categoryView = null,
+    categoryList = null,
+    categoryForm = null;
 
-              } finally {
-
-              }
-
-                s.find(".title").text(item.title);
-                s.find(".sum").text(item.sum);
-                s.find(".edit_category").data('id', item.id);
-                s.find(".open_cashs").data('id', item.id);
-                var l = s.find(".circle").text().toLowerCase();
-                var c = $.grep(colorData, function(n, i) {
-                    return l === n.letter;
-                });
-                s.find(".circle").css('background-color', c[0].color);
-            } catch(e) {
-                s = e;
-            } finally {
-                /* show */
-                $('#list').append(s);
-            }
-        });
+$(document).on('sqliteready', function() {
+    $.getJSON("data/color.json", function(data) {
+        colorData = data;
     });
-    $('#a .line').css('width', '36%');
-    $('#b .line').css('width', '76%');
+    $.get("template/category/view.html", function(html) {
+        categoryView = html;
+    });
+    $.get("template/category/list.html", function(html) {
+        categoryList = html;
+        $('#open_categorys').trigger('click');
+    });
+    $.get("template/category/form.html", function(html) {
+        categoryForm = html;
+    });
 });
+
+function CategoryToList(data) {
+    var s = $(categoryView);
+    var lower = data.title.substring(0, 1);
+    var c = $.grep(colorData, function(n, i) {
+        return lower.toLowerCase() === n.letter;
+    });
+    s.find(".circle").text(lower.toUpperCase());
+    if (c.length > 0)
+        s.find(".s2").css('background-color', c[0].color);
+    s.find(".title").text(data.title);
+    s.find(".sum").text(data.sum);
+    s.find(".edit_category").data('id', data.id);
+    s.find(".open_cashs").data('id', data.id);
+    $('#list').append(s);
+}
+
+
 /* filter list */
 $(document).on('keyup', '.categorys_filter', function() {
     var val = $(this).val();
-    var as = currentData;
-    if(val != "") {
-        as = $.grep(currentData, function(n, i) {
-            var t = n.title.toLowerCase();
-            var f = val.toLowerCase();
-            return t.indexOf(f) != -1;
-        });
-    }
-    $(document).trigger('CreateCategoryList', [{
-        data: as
-    }, true]);
+    $('#list').html('');
+    CategorysToListByUser('rze', CategoryToList, val);
 });
 /* main view*/
 $(document).on('click', '#open_categorys', function() {
@@ -60,9 +49,10 @@ $(document).on('click', '#open_categorys', function() {
     $('#open_settings').addClass('show');
     $("header .title b").text('Kategorien');
     $('body').removeClass('grey');
-    $("main").load("template/categorys.html", function() {
-        $(document).trigger('getcategorys');
-    });
+    $("main").html(categoryList);
+    CategorysToListByUser('rze', CategoryToList, null);
+
+
 });
 /* fin */
 $(document).on('categorySaved', function(e, o) {
@@ -105,26 +95,25 @@ $(document).on('click', '.edit_category', function() {
     $('#save_category').addClass('show');
     $('body').addClass('grey');
     openCaregoryId = $(this).data('id');
-    if(openCaregoryId == null) {
+    if (openCaregoryId == null) {
         $("header .title b").text('Neu');
     } else {
         $('#confirm_delete_category').addClass('show');
         $('#cut_category').addClass('show');
         $("header .title b").text('Bearbeiten');
     }
-    $("main").load("template/categoryItem.html", function() {
-        var title = $('#title'),
-            date = $('#date'),
-            rating = $('#rating');
-        var d = $.grep(currentData, function(n, i) {
-            return n.id == openCaregoryId;
-        });
-        console.log(d[0]);
-        if(d[0] != null) {
-            'title, createdate, isdeleted, user, rating'
-            title.val(d[0].title);
-            date.val(d[0].createdate);
-            rating.val(d[0].rating);
-        }
+    $("main").html(categoryForm);
+    var title = $('#title'),
+        date = $('#date'),
+        rating = $('#rating');
+    var d = $.grep(currentData, function(n, i) {
+        return n.id == openCaregoryId;
     });
+    console.log(d[0]);
+    if (d[0] != null) {
+        'title, createdate, isdeleted, user, rating'
+        title.val(d[0].title);
+        date.val(d[0].createdate);
+        rating.val(d[0].rating);
+    }
 });
