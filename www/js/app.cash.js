@@ -1,16 +1,13 @@
-var openCaregoryId, cashId;
+var openCaregoryId, cashId, item = "";
 
 function CashToList(data) {
-    $.get("template/cash/view.html", function(html) {
-        //content, createdate, category, repeat, total, iscloned, category
-        console.log(data);
-        var s = $(html);
-        s.find(".w2").text(data.total);
-        s.find("h4").text(data.content);
-        s.find("p").text(data.createdate);
-        s.find(".edit_cash").data('id', data.id);
-        $('#list').append(s);
-    });
+    //content, createdate, category, repeat, total, iscloned, category
+    var s = $(item);
+    s.find(".w2").text(data.total);
+    s.find("h4").text(data.content);
+    s.find("p").text(data.createdate);
+    s.find(".edit_cash").data('id', data.id);
+    $('#list').append(s);
 }
 /* show all cashes */
 $(document).on('click', '.open_cashs', function() {
@@ -19,15 +16,27 @@ $(document).on('click', '.open_cashs', function() {
     AddNavigtionPoint('.open_cashs');
     $('#open_settings').addClass('show');
     $("header .title b").text('Ausgaben');
-    $('body').removeClass('gray');
+    $('body').removeClass('grey');
     $("main").load("template/cash/list.html", function() {
         $('#list').html('');
-        CashesToListById(openCaregoryId, CashToList);
+        $.get("template/cash/view.html", function(html) {
+            item = html;
+            CashesToListById(openCaregoryId, CashToList, null);
+        });
     });
 });
+
+
+/* filter list */
+$(document).on('keyup', '.cashs_filter', function() {
+    var val = $(this).val();
+    $('#list').html('');
+    CashesToListById(openCaregoryId, CashToList, val);
+});
+
 /* save data */
 $(document).on('click', '#save_cash', function() {
-    if(myDB != null) {
+    if (myDB != null) {
         var cash = new Object();
         cash.id = (cashId != undefined || cashId != null) ? cashId : null;
         cash.content = $('#content').val();
@@ -37,7 +46,7 @@ $(document).on('click', '#save_cash', function() {
         cash.category = openCaregoryId;
         myDB.transaction(function(transaction) {
             SaveCash(cash, transaction, function(result) {
-                if(result.rowsAffected > 0) {
+                if (result.rowsAffected > 0) {
                     $("#toast").toast("Gespeichert");
                 }
             }, null);
@@ -57,7 +66,7 @@ $(document).on('click', '.edit_cash', function() {
     $('body').addClass('grey');
     $('#save_cash').addClass('show');
     $("main").load("template/cash/form.html", function() {
-        if(cashId != undefined || cashId != null) {
+        if (cashId != undefined || cashId != null) {
             myDB.transaction(function(transaction) {
                 GetCashById(transaction, cashId, function(item) {
                     $('#date').val(toDate(item.createdate));

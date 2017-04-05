@@ -24,7 +24,7 @@ $(document).on('savingCategory', function(e, data) {
     myDB.transaction(function(transaction) {
         var executeQuery = "",
             params = [];
-        if(data.id == null) {
+        if (data.id == null) {
             executeQuery = "INSERT INTO category (title, createdate, user, rating) VALUES (?,?,?,?)";
             params = [data.title, data.createdate, data.user, data.rating];
         } else {
@@ -49,7 +49,7 @@ $(document).on('getcategorys', function() {
             var len = results.rows.length,
                 i;
             'title, createdate, isdeleted, user, rating'
-            for(i = 0; i < len; i++) {
+            for (i = 0; i < len; i++) {
                 var createdate = results.rows.item(i).createdate;
                 var formattedTime = toDate(createdate);
                 results.rows.item(i).createdate = formattedTime;
@@ -65,12 +65,18 @@ $(document).on('getcategorys', function() {
     });
 });
 
-function CashesToListById(id, callback) {
+function CashesToListById(id, callback, search) {
     myDB.transaction(function(transaction) {
-        transaction.executeSql('SELECT * FROM cash WHERE category=?', [id], function(tx, results) {
+        var query = 'SELECT * FROM cash WHERE category=? LIMIT ?',
+            params = [id, 50];
+        if (search != null && search.length > 0) {
+            query = "SELECT * FROM cash WHERE category=? AND (content LIKE ? OR content LIKE ?) LIMIT ?";
+            params = [id, "%" + search + "%", search + "%", 100];
+        }
+        transaction.executeSql(query, params, function(tx, results) {
             var len = results.rows.length,
                 i;
-            for(i = 0; i < len; i++) {
+            for (i = 0; i < len; i++) {
                 var item = results.rows.item(i);
                 var d = new Date(item.createdate * 1000);
                 item.createdate = d.toLocaleDateString();
@@ -89,18 +95,18 @@ function fail(tx, e) {
 function getDate(s) {
     var ret = null;
     var format = /^[0-9]{2}[.][0-9]{2}[.][0-9]{4}$/;
-    if(s.match(format)) {
+    if (s.match(format)) {
         var a = s.split(".");
         var b = a[2] + "/" + a[1] + "/" + a[0]
         ret = new Date(b);
     }
     format = /^[0-9]{4}[-][0-9]{2}[-][0-9]{2}/;
-    if(s.match(format) && ret == null) {
+    if (s.match(format) && ret == null) {
         var b = s.replace("-", "/");
         ret = new Date(b);
     }
     format = /^[0-9]{4}[/][0-9]{2}[/][0-9]{2}/;
-    if(s.match(format) && ret == null) {
+    if (s.match(format) && ret == null) {
         ret = new Date(s);
     }
     return ret;
@@ -130,7 +136,7 @@ function ResoreDataBaseByJson(json) {
 function SaveCategory(data, transaction, toast, callback) {
     executeQuery = "";
     params = [];
-    if(data.id == null) {
+    if (data.id == null) {
         executeQuery = "INSERT INTO category (title, createdate, user, rating) VALUES (?,?,?,?)";
         params = [data.title, data.createdate, data.user, data.rating];
     } else {
@@ -138,10 +144,10 @@ function SaveCategory(data, transaction, toast, callback) {
         params = [data.title, data.createdate, data.user, data.rating, data.id];
     }
     transaction.executeSql(executeQuery, params, function(tx, result) {
-        if(toast != null) {
+        if (toast != null) {
             /*toast*/
         }
-        if(callback != null) {
+        if (callback != null) {
             $.each(data.cash, function(index, cash) {
                 cash.id = null;
                 cash.category = result.insertId;
@@ -156,7 +162,7 @@ function SaveCash(data, transaction, toast, callback) {
     console.log(data);
     executeQuery = "";
     params = [];
-    if(data.id == null) {
+    if (data.id == null) {
         executeQuery = "INSERT INTO cash (content, createdate, category, repeat, total, iscloned, category) VALUES (?,?,?,?,?,?,?)";
         params = [data.content, data.createdate, data.category, data.repeat, data.total, data.iscloned, data.category];
     } else {
@@ -164,11 +170,11 @@ function SaveCash(data, transaction, toast, callback) {
         params = [data.content, data.createdate, data.category, data.repeat, data.total, data.iscloned, data.category, data.id];
     }
     transaction.executeSql(executeQuery, params, function(tx, result) {
-        if(toast != null) {
+        if (toast != null) {
             /*toast*/
             toast(result);
         }
-        if(callback != null) {
+        if (callback != null) {
             /* function*/
             callback(result);
         }
