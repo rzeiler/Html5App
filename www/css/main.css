@@ -41,10 +41,10 @@ main {
 
 
 
-main>div.show {
+/*main>div.show {
     height: 100%;
     opacity: 1;
-}
+}*/
 
 .category {
     padding-top: 20px;
@@ -159,3 +159,5 @@ input.categorys_filter, input.cashs_filter {
     border-right: 1px solid transparent;
     background-color: transparent;
 }
+
+ 

@@ -10,7 +10,14 @@ $(document).on('CreateCategoryList', function(e, json, isSearch) {
         $.each(json.data, function(key, item) {
             var s = $(html);
             try {
-                s.find(".circle").text(item.title.substring(0, 1));
+              try {
+                      s.find(".circle").text(item.title.substring(0, 1));
+              } catch (e) {
+
+              } finally {
+
+              }
+
                 s.find(".title").text(item.title);
                 s.find(".sum").text(item.sum);
                 s.find(".edit_category").data('id', item.id);
@@ -65,11 +72,7 @@ $(document).on('categorySaved', function(e, o) {
 });
 /* save click */
 $(document).on('click', '#save_category', function() {
-    if($("#form").validate()) {
-        alert("ok");
-    } else {
-        alert("false");
-    }
+
     var title = $('#title').val();
     var createdate = toTimestamp($('#date').val());
     var user = 'rze';

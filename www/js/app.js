@@ -8,11 +8,11 @@ $(document).on('deviceready', function() {
     });
 });
 /* run app with database */
-$(document).on('databaseready', function() {
+$(document).on('StartApp', function() {
     $('#open_categorys').trigger('click');
 });
 $(document).on('click', '.back', function() {
-    if (navpos.length > 1) {
+    if(navpos.length > 1) {
         var o = navpos[navpos.length - 2];
         $(o).trigger('click');
     }
@@ -21,7 +21,7 @@ $(document).on('click', '.back', function() {
 function AddNavigtionPoint(v) {
     $('a.option').removeClass('show');
     var a = navpos.indexOf(v);
-    if (a == -1) {
+    if(a == -1) {
         navpos.push(v);
     } else {
         navpos.length = a + 1;
@@ -30,7 +30,7 @@ function AddNavigtionPoint(v) {
     $.each(navpos, function(i, v) {
         console.log(i, v);
         var a = $("<span/>");
-        if (v.indexOf('#') == 0) {
+        if(v.indexOf('#') == 0) {
             a.attr('id', v.substring(1));
         } else {
             a.attr('class', v.substring(1));
@@ -38,41 +38,15 @@ function AddNavigtionPoint(v) {
         a.text(v);
         $('.brad').append(a);
     });
-
-    if (navpos.length > 1) {
+    if(navpos.length > 1) {
         $('#go_back').addClass('show');
     } else {
         $('#go_back').removeClass('show');
     }
 }
 var currentData, currentHtml, openCaregoryId, openCashId;
-
-
-$(document).on('keyup', '.cashs_filter', function() {
-    var val = $(this).val();
-    var as = currentData;
-    if (val != "") {
-        as = $.grep(currentData, function(n, i) {
-            var t = n.title.toLowerCase();
-            var f = val.toLowerCase();
-            return t.indexOf(f) != -1;
-        });
-    }
-    toListCash(as);
-});
-
-$(document).on('click', '.edit_cash', function() {
-    AddNavigtionPoint('.edit_cash');
-
-    $("header .title b").text('Bearbeiten');
-    $('body').addClass('gray');
-    $("main").load("template/cash.html", function() {
-        AnimateMain();
-    });
-});
 $(document).on('click', '#open_settings', function() {
     AddNavigtionPoint('#open_settings');
-
     $("header .title b").text('Einstellungen');
     $('body').addClass('gray');
     $("main").load("template/settings.html", function() {
@@ -102,13 +76,9 @@ function toDate(iDate) {
     date = null;
     return t;
 }
-$(document).on('click', '#save_cash', function() {
-    $("#toast").toast('Ausgabe gespeichert')
-    $('#save_cash').removeClass('show');
-    $('.open_cashs').trigger('click');
-});
 /* global functions */
 var myVar;
+
 $.fn.toast = function(text) {
     var toast = this;
     clearTimeout(myVar);
@@ -118,7 +88,6 @@ $.fn.toast = function(text) {
         toast.removeClass('active');
     }, 5000);
 };
-
 /* animate section element */
 function AnimateSection() {
     $('#list li').each(function(i) {

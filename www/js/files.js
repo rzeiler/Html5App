@@ -16,6 +16,10 @@ function OpenDirectoryByPath(path) {
         var directoryReader = dcim.createReader();
         directoryReader.readEntries(function(entries) {
             $('#fileExplorer #list').html("");
+
+
+
+
             for (i = 0; i < entries.length; i++) {
                 var a = "<a class='" + ((entries[i].isDirectory) ? "dir" : "file") + "' data-path='" + entries[i].fullPath + "' >" + entries[i].name + "</a>";
                 $('#fileExplorer #list').prepend(a);
@@ -39,3 +43,23 @@ function OpenFileByPath(path) {
 function fail(evt) {
     alert(evt.target.error.code);
 }
+
+
+/*
+* click events
+*/
+/* open directory */
+$(document).on('click', 'a.dir', function() {
+    var path = $(this).data('path');
+    OpenDirectoryByPath(path);
+});
+/* open fiel */
+$(document).on('click', 'a.file', function() {
+    $('#fileExplorer').removeClass('show');
+    var path = $(this).data('path');
+    OpenFileByPath(path);
+});
+/* close explorer */
+$(document).on('click', '#fileExplorer #close', function() {
+    $('#fileExplorer').removeClass('show');
+});
