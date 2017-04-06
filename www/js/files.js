@@ -1,5 +1,4 @@
 document.addEventListener("deviceready", InitFileSystem, fail);
-
 var sdcard;
 
 function InitFileSystem() {
@@ -9,21 +8,25 @@ function InitFileSystem() {
 }
 
 function OpenDirectoryByPath(path) {
-    $('#fileExplorer #list').html("loading...");
+    $('#list').html("loading...");
     sdcard.getDirectory(path, {
         create: false
     }, function(dcim) {
         var directoryReader = dcim.createReader();
         directoryReader.readEntries(function(entries) {
-            $('#fileExplorer #list').html("");
-
-
-
-
-            for (i = 0; i < entries.length; i++) {
-                var a = "<a class='" + ((entries[i].isDirectory) ? "dir" : "file") + "' data-path='" + entries[i].fullPath + "' >" + entries[i].name + "</a>";
-                $('#fileExplorer #list').prepend(a);
+            $('#list').html("");
+            for(i = 0; i < entries.length; i++) {
+                var a = "<div class='tr'><div class='td'><i class='material-icons'>insert_drive_file</i></div>";
+                if(entries[i].isDirectory) {
+                    a = "<div class='tr'><div class='td'><i class='material-icons'>folder_open</i></div>";
+                }
+                a += "<div class='td " + ((entries[i].isDirectory) ? "dir" : "file") + "' data-path='" + entries[i].fullPath + "' >" + entries[i].name + "</div></div>";
+                $('#list').prepend(a);
             }
+            dcim.getParent(function(parent) {
+                var a = "<div class='td dir' data-path='" + parent.fullPath + "' >..</div></div>";
+                $('#list').prepend(a);
+            }, fail);
         }, fail);
     }, fail);
 }
@@ -43,23 +46,17 @@ function OpenFileByPath(path) {
 function fail(evt) {
     alert(evt.target.error.code);
 }
-
-
 /*
-* click events
-*/
+ * click events
+ */
 /* open directory */
-$(document).on('click', 'a.dir', function() {
+$(document).on('click', 'div.dir', function() {
     var path = $(this).data('path');
     OpenDirectoryByPath(path);
 });
 /* open fiel */
-$(document).on('click', 'a.file', function() {
-    $('#fileExplorer').removeClass('show');
+$(document).on('click', 'div.file', function() {
+    $('#open_settings').trigger('click');
     var path = $(this).data('path');
     OpenFileByPath(path);
-});
-/* close explorer */
-$(document).on('click', '#fileExplorer #close', function() {
-    $('#fileExplorer').removeClass('show');
 });

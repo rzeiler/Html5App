@@ -29,16 +29,13 @@ main {
     padding-top: 60px;
 }
 
-#EditCategoryView{
--webkit-transition: all 1s;
-
+#EditCategoryView {
+    -webkit-transition: all 1s;
 }
 
-#MainCategoryView{
--webkit-transition: all 1s;
-
+#MainCategoryView {
+    -webkit-transition: all 1s;
 }
-
 
 
 /*main>div.show {
@@ -85,12 +82,9 @@ h4, p {
 }
 
 a.fab {
-    font-size: 210%;
     position: fixed;
-    padding: 5px;
     width: 50px;
     height: 49px;
-    line-height: 88px;
     text-align: center;
     bottom: 10px;
     right: 10px;
@@ -108,11 +102,14 @@ a.fab:active {
     background-color: #F2958E;
 }
 
+a.fab i.material-icons {
+  font-size: 260%;
+line-height: 140%;
+}
+
 .settings {
     padding: 10px;
 }
-
-
 
 div.gray {
     background-color: #EEEEEE;
@@ -159,5 +156,3 @@ input.categorys_filter, input.cashs_filter {
     border-right: 1px solid transparent;
     background-color: transparent;
 }
-
- 

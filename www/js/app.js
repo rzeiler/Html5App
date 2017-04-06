@@ -1,13 +1,8 @@
+/*
+cordova plugin add https://github.com/floatinghotpot/cordova-httpd.git
+*/
 const navpos = new Array();
 var colorData;
-/* get color */
-$(document).on('deviceready', function() {
-  
-});
-/* run app with database */
-
-
-
 $(document).on('click', '.back', function() {
     if(navpos.length > 1) {
         var o = navpos[navpos.length - 2];
@@ -42,22 +37,12 @@ function AddNavigtionPoint(v) {
     }
 }
 var currentData, currentHtml, openCaregoryId, openCashId;
-$(document).on('click', '#open_settings', function() {
-    AddNavigtionPoint('#open_settings');
-    $("header .title b").text('Einstellungen');
-    $('body').addClass('gray');
-    $("main").load("template/settings.html", function() {
-        AnimateMain();
-    });
-});
+
 
 function toTimestamp(strDate) {
     /* 2017-12-01 */
-    console.log("toTimestamp", strDate);
     var d = new Date(strDate);
-    console.log("toTimestamp", d);
     var t = d.getTime() / 1000;
-    console.log("toTimestamp", t);
     return t;
 }
 
@@ -75,7 +60,6 @@ function toDate(iDate) {
 }
 /* global functions */
 var myVar;
-
 $.fn.toast = function(text) {
     var toast = this;
     clearTimeout(myVar);

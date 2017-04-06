@@ -6,9 +6,9 @@
     text-align: center;
     color: #fff;
     font-size: 150%;
-    line-height: 57px;
+    line-height: 230%;
     margin: auto;
-    background-color: #e4f29a;
+    background-color: #24f292;
 }
 
 #list .td {
@@ -17,4 +17,8 @@
 
 #list .td.s2 {
     width: 60px;
+}
+
+#list .td span {
+    display: block;
 }

@@ -3,7 +3,6 @@ var openCaregoryId = null,
     item = null,
     list = null,
     form = null;
-
 $(document).on('sqliteready', function() {
     $.get("template/cash/view.html", function(html) {
         item = html;
@@ -19,7 +18,10 @@ $(document).on('sqliteready', function() {
 function CashToList(data) {
     //content, createdate, category, repeat, total, iscloned, category
     var s = $(item);
-    s.find(".w2").text(data.total);
+    if(data.total != null) {
+        var sum = data.total + "&euro;";
+        s.find(".w2").html(sum);
+    }
     s.find("h4").text(data.content);
     s.find("p").text(data.createdate);
     s.find(".edit_cash").data('id', data.id);
@@ -34,54 +36,58 @@ $(document).on('click', '.open_cashs', function() {
     $("header .title b").text('Ausgaben');
     $('body').removeClass('grey');
     $('main').html(list)
-    CashesToListById(openCaregoryId, CashToList, null);
+    sqlite.CashesToListById(openCaregoryId, CashToList, null);
 });
 /* filter list */
-$(document).on('keyup', '.cashs_filter', function() {
+$(document).on('search', '.cashs_filter', function() {
     var val = $(this).val();
     $('#list').html('');
-    CashesToListById(openCaregoryId, CashToList, val);
+    sqlite.CashesToListById(openCaregoryId, CashToList, val);
 });
 /* save data */
 $(document).on('click', '#save_cash', function() {
-    if (myDB != null) {
-        var cash = new Object();
-        cash.id = (cashId != undefined || cashId != null) ? cashId : null;
-        cash.content = $('#content').val();
-        cash.createdate = toTimestamp($('#date').val());
-        cash.repeat = $('#repeat').val();
-        cash.total = $('#total').val();
-        cash.category = openCaregoryId;
-        myDB.transaction(function(transaction) {
-            SaveCash(cash, transaction, function(result) {
-                if (result.rowsAffected > 0) {
-                    $("#toast").toast("Gespeichert");
-                }
-            }, null);
-        });
+    var cash = new Object();
+    cash.id = (cashId != undefined || cashId != null) ? cashId : null;
+    cash.content = $('#content').val();
+    cash.createdate = toTimestamp($('#date').val());
+    cash.repeat = $('#repeat').val();
+    cash.total = $('#total').val();
+    cash.category = openCaregoryId;
+    if(cash.content != "" && cash.createdate != "" && cash.repeat != "" && cash.total != "" && cash.category != "") {
+        sqlite.saveCash(cash, function(result) {
+            if(result.rowsAffected > 0) {
+                $("#toast").toast("Gespeichert");
+            } else {
+                alert("Fehler beim Speichern.");
+            }
+        }, null);
         $('body').removeClass('grey');
         $('#save_cash').removeClass('show');
         $('.open_cashs').trigger('click');
     } else {
-        alert("DB nicht vorhanden.");
+        alert("Bitte prüfe deine eingaben.");
     }
 });
 /* edit or create cash */
 $(document).on('click', '.edit_cash', function() {
     AddNavigtionPoint('.edit_cash');
     cashId = $(this).data('id');
-    $("header .title b").text('Bearbeiten');
+    if(cashId == null) {
+        $("header .title b").text('Neu');
+    } else {
+        $('#confirm_delete_cash').addClass('show');
+        $('#cut_cash').addClass('show');
+        $("header .title b").text('Bearbeiten');
+    }
     $('body').addClass('grey');
     $('#save_cash').addClass('show');
     $("main").html(form);
-    if (cashId != undefined || cashId != null) {
-        myDB.transaction(function(transaction) {
-            GetCashById(transaction, cashId, function(item) {
-                $('#date').val(toDate(item.createdate));
-                $('#content').val(item.content);
-                $('#repeat').val(item.repeat);
-                $('#total').val(item.total);
-            });
+    if(cashId != undefined || cashId != null) {
+        sqlite.GetCashById(cashId, function(item) {
+            $('#date').val(toDate(item.createdate));
+            $('#content').val(item.content);
+            $('#repeat').val(item.repeat);
+            $('#total').val(item.total);
         });
     }
 });

@@ -2,7 +2,6 @@ var currentData, currentHtml, openCaregoryId, openCashId;
 var categoryView = null,
     categoryList = null,
     categoryForm = null;
-
 $(document).on('sqliteready', function() {
     $.getJSON("data/color.json", function(data) {
         colorData = data;
@@ -26,21 +25,24 @@ function CategoryToList(data) {
         return lower.toLowerCase() === n.letter;
     });
     s.find(".circle").text(lower.toUpperCase());
-    if (c.length > 0)
-        s.find(".s2").css('background-color', c[0].color);
+    if(c.length > 0) {
+        s.find(".circle").css('background-color', c[0].color);
+        s.find(".title").css('color', c[0].color);
+    }
     s.find(".title").text(data.title);
-    s.find(".sum").text(data.sum);
+    if(data.total != null){
+      var sum = data.total + "&euro;";
+      s.find(".sum").html(sum);
+    }
     s.find(".edit_category").data('id', data.id);
     s.find(".open_cashs").data('id', data.id);
     $('#list').append(s);
 }
-
-
 /* filter list */
-$(document).on('keyup', '.categorys_filter', function() {
+$(document).on('search', '.categorys_filter', function() {
     var val = $(this).val();
     $('#list').html('');
-    CategorysToListByUser('rze', CategoryToList, val);
+    sqlite.CategorysToListByUser('rze', CategoryToList, val);
 });
 /* main view*/
 $(document).on('click', '#open_categorys', function() {
@@ -50,30 +52,30 @@ $(document).on('click', '#open_categorys', function() {
     $("header .title b").text('Kategorien');
     $('body').removeClass('grey');
     $("main").html(categoryList);
-    CategorysToListByUser('rze', CategoryToList, null);
-
-
-});
-/* fin */
-$(document).on('categorySaved', function(e, o) {
-    console.log(o.info);
-    $("#toast").toast(o.info);
-    $('#open_categorys').trigger('click');
+    sqlite.CategorysToListByUser('rze', CategoryToList, null);
 });
 /* save click */
 $(document).on('click', '#save_category', function() {
-
-    var title = $('#title').val();
-    var createdate = toTimestamp($('#date').val());
-    var user = 'rze';
-    var rating = $('#rating').val();
-    $(document).trigger('savingCategory', [{
-        title: title,
-        createdate: createdate,
-        user: user,
-        rating: rating,
-        id: openCaregoryId
-    }, ]);
+    var category = new Object();
+    category.id = (openCaregoryId != undefined || openCaregoryId != null) ? openCaregoryId : null;
+    category.title = $('#title').val();
+    category.createdate = toTimestamp($('#date').val());
+    category.user = 'rze';
+    category.rating = $('#rating').val();
+    if(category.title != "" && category.createdate != "" && category.user != "" && category.rating != "") {
+        sqlite.saveCategory(category, function(result) {
+            if(result.rowsAffected > 0) {
+                $("#toast").toast("Gespeichert");
+            } else {
+                alert("Fehler beim Speichern.");
+            }
+        }, null);
+        $('body').removeClass('grey');
+        $('#save_cash').removeClass('show');
+        $('#open_categorys').trigger('click');
+    } else {
+        alert("Bitte prüfe deine eingaben.");
+    }
 });
 /* delete */
 $(document).on('click', '#confirm_delete_category', function() {
@@ -95,7 +97,7 @@ $(document).on('click', '.edit_category', function() {
     $('#save_category').addClass('show');
     $('body').addClass('grey');
     openCaregoryId = $(this).data('id');
-    if (openCaregoryId == null) {
+    if(openCaregoryId == null) {
         $("header .title b").text('Neu');
     } else {
         $('#confirm_delete_category').addClass('show');
@@ -103,17 +105,11 @@ $(document).on('click', '.edit_category', function() {
         $("header .title b").text('Bearbeiten');
     }
     $("main").html(categoryForm);
-    var title = $('#title'),
-        date = $('#date'),
-        rating = $('#rating');
-    var d = $.grep(currentData, function(n, i) {
-        return n.id == openCaregoryId;
-    });
-    console.log(d[0]);
-    if (d[0] != null) {
-        'title, createdate, isdeleted, user, rating'
-        title.val(d[0].title);
-        date.val(d[0].createdate);
-        rating.val(d[0].rating);
+    if(openCaregoryId != undefined || openCaregoryId != null) {
+        sqlite.GetCategoryById(openCaregoryId, function(item) {
+            $('#date').val(toDate(item.createdate));
+            $('#title').val(item.title);
+            $('#rating').val(item.rating);
+        });
     }
 });
