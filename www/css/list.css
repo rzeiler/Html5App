@@ -6,19 +6,28 @@
     text-align: center;
     color: #fff;
     font-size: 150%;
-    line-height: 230%;
+    line-height: 260%;
     margin: auto;
     background-color: #24f292;
 }
 
 #list .td {
     padding: 8px;
+    vertical-align: top;
 }
 
-#list .td.s2 {
-    width: 60px;
-}
-
-#list .td span {
+#list .td span, #list .td div {
     display: block;
+}
+
+#list .cash .td .total {
+    font-size: 180%;
+}
+
+#list .cash .td .date {
+    font-size: 95%;
+}
+
+#list .cash .td .total, #list .cash .td .date {
+    float: right;
 }

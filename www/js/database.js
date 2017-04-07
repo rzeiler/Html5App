@@ -1,8 +1,7 @@
 /* init */
 /* https://phonegappro.com/phonegap-tutorial/phonegap-sqlite-tutorial-with-example-apache-cordova/ */
 var executeQuery = "",
-    params = [],
-    deleteCounter = 0;
+    params = [];
 /* class */
 var sqlite = {
     db: null,
@@ -26,131 +25,122 @@ var sqlite = {
         });
         $(document).trigger('sqliteready');
     },
-    saveCategory: function(data, toast, callback) {
-        this.db.transaction(function(transaction) {
-            executeQuery = "";
-            params = [];
-            if(data.id == null) {
-                executeQuery = "INSERT INTO category (title, createdate, user, rating) VALUES (?,?,?,?)";
-                params = [data.title, data.createdate, data.user, data.rating];
-            } else {
-                executeQuery = "UPDATE category SET title=?, createdate=?, user=?, rating=? WHERE id=?";
-                params = [data.title, data.createdate, data.user, data.rating, data.id];
+    saveCategory: function(data, tx, toast, bool) {
+        executeQuery = "";
+        params = [];
+        if(data.id == null) {
+            executeQuery = "INSERT INTO category (title, createdate, user, rating) VALUES (?,?,?,?)";
+            params = [data.title, data.createdate, data.user, data.rating];
+        } else {
+            executeQuery = "UPDATE category SET title=?, createdate=?, user=?, rating=? WHERE id=?";
+            params = [data.title, data.createdate, data.user, data.rating, data.id];
+        }
+        tx.executeSql(executeQuery, params, function(tx, result) {
+            if(toast != null) {
+                /*toast*/
+                toast(result);
             }
-            transaction.executeSql(executeQuery, params, function(tx, result) {
-                if(toast != null) {
-                    /*toast*/
-                }
-                if(callback != null) {
-                    $.each(data.cash, function(index, cash) {
-                        cash.id = null;
-                        cash.category = result.insertId;
-                        cash.createdate = getDate(cash.createdate).getTime() / 1000;
-                        callback(cash, transaction);
-                    });
-                }
-            }, fail);
-        });
+            if(bool) {
+                $.each(data.cash, function(index, cash) {
+                    cash.id = null;
+                    cash.category = result.insertId;
+                    cash.createdate = sqlite.getDate(cash.createdate).getTime() / 1000;
+                    sqlite.saveCash(cash, tx, null, null);
+                });
+            }
+        }, sqlite.fail);
     },
-    saveCash: function(data, toast, callback) {
-        this.db.transaction(function(transaction) {
-            executeQuery = "";
-            params = [];
-            data.total = this.toSqliteNumber(data.total);
-            if(data.id == null) {
-                executeQuery = "INSERT INTO cash (content, createdate, category, repeat, total, iscloned, category) VALUES (?,?,?,?,?,?,?)";
-                params = [data.content, data.createdate, data.category, data.repeat, data.total, data.iscloned, data.category];
-            } else {
-                executeQuery = "UPDATE cash SET content=?, createdate=?, category=?, repeat=?, total=?, iscloned=?, category=? WHERE id=?";
-                params = [data.content, data.createdate, data.category, data.repeat, data.total, data.iscloned, data.category, data.id];
+    saveCash: function(data, tx, toast, callback) {
+        executeQuery = "";
+        params = [];
+        data.total = sqlite.toSqliteNumber(data.total);
+        if(data.id == null) {
+            executeQuery = "INSERT INTO cash (content, createdate, category, repeat, total, iscloned, category) VALUES (?,?,?,?,?,?,?)";
+            params = [data.content, data.createdate, data.category, data.repeat, data.total, data.iscloned, data.category];
+        } else {
+            executeQuery = "UPDATE cash SET content=?, createdate=?, category=?, repeat=?, total=?, iscloned=?, category=? WHERE id=?";
+            params = [data.content, data.createdate, data.category, data.repeat, data.total, data.iscloned, data.category, data.id];
+        }
+        tx.executeSql(executeQuery, params, function(tx, result) {
+            if(toast != null) {
+                /*toast*/
+                toast(result);
             }
-            transaction.executeSql(executeQuery, params, function(tx, result) {
-                if(toast != null) {
-                    /*toast*/
-                    toast(result);
-                }
-                if(callback != null) {
-                    /* function*/
-                    callback(result);
-                }
-            }, fail);
-        });
+            if(callback != null) {
+                /* function*/
+                callback(result);
+            }
+        }, sqlite.fail);
     },
-    CategorysToListByUser: function(user, callback, search) {
-        this.db.transaction(function(transaction) {
-            var query = 'SELECT a.id, a.title, SUM(b.total) AS total FROM category a LEFT JOIN cash b ON b.category=a.id WHERE a.user=? GROUP BY a.id ORDER BY a.title ASC, a.rating DESC ',
-                params = [user];
-            if(search != null && search.length > 0) {
-                query = "SELECT * FROM category WHERE user=? AND (title LIKE ? OR title LIKE ?) ORDER BY title ASC, rating DESC ";
-                params = [user, "%" + search + "%", search + "%"];
+    CategorysToListByUser: function(user, tx, callback, search) {
+        var query = 'SELECT a.id, a.title, SUM(b.total) AS total FROM category a LEFT JOIN cash b ON b.category=a.id WHERE a.user=? GROUP BY a.id ORDER BY a.title ASC, a.rating DESC ',
+            params = [user];
+        if(search != null && search.length > 0) {
+            query = "SELECT * FROM category WHERE user=? AND (title LIKE ? OR title LIKE ?) ORDER BY title ASC, rating DESC ";
+            params = [user, "%" + search + "%", search + "%"];
+        }
+        tx.executeSql(query, params, function(tx, results) {
+            var len = results.rows.length,
+                i;
+            for(i = 0; i < len; i++) {
+                var item = results.rows.item(i);
+                var d = new Date(item.createdate * 1000);
+                item.createdate = d.toLocaleDateString();
+                item.total = sqlite.toLocalNumber(item.total);
+                callback(item);
+                item = null;
             }
-            transaction.executeSql(query, params, function(tx, results) {
-                var len = results.rows.length,
-                    i;
-                for(i = 0; i < len; i++) {
-                    var item = results.rows.item(i);
-                    var d = new Date(item.createdate * 1000);
-                    item.createdate = d.toLocaleDateString();
-                    callback(item);
-                    item = null;
-                }
-            }, fail);
-        });
+        }, sqlite.fail);
     },
-    CashesToListById: function(id, callback, search) {
-        this.db.transaction(function(transaction) {
-            var query = 'SELECT * FROM cash WHERE category=? ORDER BY createdate LIMIT ?',
-                params = [id, 50];
-            if(search != null && search.length > 0) {
-                query = "SELECT * FROM cash WHERE category=? AND (content LIKE ? OR content LIKE ?) ORDER BY createdate LIMIT ?";
-                params = [id, "%" + search + "%", search + "%", 100];
+    CashesToListById: function(id, tx, callback, search) {
+        var query = 'SELECT * FROM cash WHERE category=? ORDER BY createdate DESC LIMIT ?',
+            params = [id, 50];
+        if(search != null && search.length > 0) {
+            query = "SELECT * FROM cash WHERE category=? AND (content LIKE ? OR content LIKE ?) ORDER BY createdate LIMIT ?";
+            params = [id, "%" + search + "%", search + "%", 100];
+        }
+        tx.executeSql(query, params, function(tx, results) {
+            var len = results.rows.length,
+                i;
+            for(i = 0; i < len; i++) {
+                var item = results.rows.item(i);
+                var d = new Date(item.createdate * 1000);
+                item.createdate = d.toLocaleDateString();
+                item.total = sqlite.toLocalNumber(item.total);
+                callback(item);
+                item = null;
             }
-            transaction.executeSql(query, params, function(tx, results) {
-                var len = results.rows.length,
-                    i;
-                for(i = 0; i < len; i++) {
-                    var item = results.rows.item(i);
-                    var d = new Date(item.createdate * 1000);
-                    item.createdate = d.toLocaleDateString();
-                    callback(item);
-                    item = null;
-                }
-            }, fail);
-        });
+        }, sqlite.fail);
     },
     GetCashById: function(id, callback) {
-        this.db.transaction(function(transaction) {
+        sqlite.db.transaction(function(transaction) {
             transaction.executeSql("SELECT * FROM cash WHERE id=?", [id], function(tx, result) {
                 callback(result.rows.item(0));
-            }, function(tx, e) {
-                console.log("error", tx, e);
-            });
+            }, sqlite.fail);
         });
     },
     GetCategoryById: function(id, callback) {
-        this.db.transaction(function(transaction) {
+        sqlite.db.transaction(function(transaction) {
             transaction.executeSql("SELECT * FROM category WHERE id=?", [id], function(tx, result) {
                 callback(result.rows.item(0));
-            }, function(tx, e) {
-                console.log("error", tx, e);
-            });
+            }, sqlite.fail);
         });
     },
     ResoreDataBaseByJson: function(json) {
         var data = $.parseJSON(json);
         executeQuery = "";
-        this.db.transaction(function(transaction) {
-            executeQuery = "DELETE FROM cash ";
-            transaction.executeSql(executeQuery, params, function(tx, result) {
+        sqlite.db.transaction(function(tx) {
+            executeQuery = "DELETE FROM cash";
+            tx.executeSql(executeQuery, params, function(tx, result) {
                 executeQuery = "DELETE FROM category ";
-                transaction.executeSql(executeQuery, params, function(tx, result) {
+                tx.executeSql(executeQuery, params, function(tx, result) {
                     $.each(data, function(index, category) {
                         category.id = null;
-                        category.createdate = this.getDate(category.createdate).getTime() / 1000;
-                        this.SaveCategory(category, transaction, null, SaveCash);
+                        category.createdate = sqlite.getDate(category.createdate).getTime() / 1000;
+                        sqlite.saveCategory(category, tx, null, true);
                     });
-                }, fail);
-            }, fail);
+                }, sqlite.fail);
+            }, sqlite.fail);
         });
     },
     fail: function(tx, e) {
@@ -178,7 +168,12 @@ var sqlite = {
         return ret;
     },
     toSqliteNumber: function(number) {
-        var ret = parseFloat(number.replace(",", "."));
+        var ret = parseFloat(String(number).replace(",", "."));
+        ret = ret.toFixed(2);
+        return ret;
+    },
+    toLocalNumber: function(number) {
+        var ret = parseFloat(number);
         ret = ret.toFixed(2);
         return ret;
     }

@@ -30,9 +30,9 @@ function CategoryToList(data) {
         s.find(".title").css('color', c[0].color);
     }
     s.find(".title").text(data.title);
-    if(data.total != null){
-      var sum = data.total + "&euro;";
-      s.find(".sum").html(sum);
+    if(data.total != null) {
+        var sum = "&sum; " + data.total + " &euro;";
+        s.find(".sum").html(sum);
     }
     s.find(".edit_category").data('id', data.id);
     s.find(".open_cashs").data('id', data.id);
@@ -52,7 +52,9 @@ $(document).on('click', '#open_categorys', function() {
     $("header .title b").text('Kategorien');
     $('body').removeClass('grey');
     $("main").html(categoryList);
-    sqlite.CategorysToListByUser('rze', CategoryToList, null);
+    sqlite.db.transaction(function(tx) {
+        sqlite.CategorysToListByUser('rze', tx, CategoryToList, null);
+    });
 });
 /* save click */
 $(document).on('click', '#save_category', function() {
@@ -63,13 +65,15 @@ $(document).on('click', '#save_category', function() {
     category.user = 'rze';
     category.rating = $('#rating').val();
     if(category.title != "" && category.createdate != "" && category.user != "" && category.rating != "") {
-        sqlite.saveCategory(category, function(result) {
-            if(result.rowsAffected > 0) {
-                $("#toast").toast("Gespeichert");
-            } else {
-                alert("Fehler beim Speichern.");
-            }
-        }, null);
+        sqlite.db.transaction(function(tx) {
+            sqlite.saveCategory(category, tx, function(result) {
+                if(result.rowsAffected > 0) {
+                    $("#toast").toast("Gespeichert");
+                } else {
+                    alert("Fehler beim Speichern.");
+                }
+            }, false);
+        });
         $('body').removeClass('grey');
         $('#save_cash').removeClass('show');
         $('#open_categorys').trigger('click');

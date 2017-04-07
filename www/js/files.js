@@ -36,7 +36,7 @@ function OpenFileByPath(path) {
         fileEntry.file(function(file) {
             var reader = new FileReader();
             reader.onloadend = function() {
-                ResoreDataBaseByJson(this.result);
+                sqlite.ResoreDataBaseByJson(this.result);
             };
             reader.readAsText(file);
         }, fail);

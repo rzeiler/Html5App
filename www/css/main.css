@@ -59,6 +59,14 @@ h4, p {
     display: table-cell;
 }
 
+.td.w4 {
+    width: 30%;
+}
+
+.td.w6 {
+    width: 70%;
+}
+
 .td.w2 {
     width: 20%;
 }
@@ -98,13 +106,21 @@ a.fab {
     color: #ffffff;
 }
 
+.fontRed {
+    color: #F44336;
+}
+
+.fontLila {
+    color: #B55BFF;
+}
+
 a.fab:active {
     background-color: #F2958E;
 }
 
 a.fab i.material-icons {
-  font-size: 260%;
-line-height: 140%;
+    font-size: 260%;
+    line-height: 155%;
 }
 
 .settings {

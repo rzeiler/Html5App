@@ -16,14 +16,13 @@ $(document).on('sqliteready', function() {
 });
 
 function CashToList(data) {
-    //content, createdate, category, repeat, total, iscloned, category
     var s = $(item);
     if(data.total != null) {
         var sum = data.total + "&euro;";
-        s.find(".w2").html(sum);
+        s.find(".total").html(sum);
     }
-    s.find("h4").text(data.content);
-    s.find("p").text(data.createdate);
+    s.find(".content").text(data.content);
+    s.find(".date").text(data.createdate);
     s.find(".edit_cash").data('id', data.id);
     $('#list').append(s);
 }
@@ -36,7 +35,9 @@ $(document).on('click', '.open_cashs', function() {
     $("header .title b").text('Ausgaben');
     $('body').removeClass('grey');
     $('main').html(list)
-    sqlite.CashesToListById(openCaregoryId, CashToList, null);
+    sqlite.db.transaction(function(tx) {
+        sqlite.CashesToListById(openCaregoryId, tx, CashToList, null);
+    });
 });
 /* filter list */
 $(document).on('search', '.cashs_filter', function() {
@@ -54,13 +55,15 @@ $(document).on('click', '#save_cash', function() {
     cash.total = $('#total').val();
     cash.category = openCaregoryId;
     if(cash.content != "" && cash.createdate != "" && cash.repeat != "" && cash.total != "" && cash.category != "") {
-        sqlite.saveCash(cash, function(result) {
-            if(result.rowsAffected > 0) {
-                $("#toast").toast("Gespeichert");
-            } else {
-                alert("Fehler beim Speichern.");
-            }
-        }, null);
+        sqlite.db.transaction(function(tx) {
+            sqlite.saveCash(cash, tx, function(result) {
+                if(result.rowsAffected > 0) {
+                    $("#toast").toast("Gespeichert");
+                } else {
+                    alert("Fehler beim Speichern.");
+                }
+            }, null);
+        });
         $('body').removeClass('grey');
         $('#save_cash').removeClass('show');
         $('.open_cashs').trigger('click');
