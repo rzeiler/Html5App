@@ -1,8 +1,12 @@
 /*
 cordova plugin add https://github.com/floatinghotpot/cordova-httpd.git
+
 */
 const navpos = new Array();
 var colorData;
+
+
+
 $(document).on('click', '.back', function() {
     if(navpos.length > 1) {
         var o = navpos[navpos.length - 2];

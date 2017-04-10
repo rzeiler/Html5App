@@ -1,8 +1,4 @@
-/* cordova plugin add cordova-plugin-app-preferences */
-var prefs;
-$(document).on('deviceready', function() {
-    prefs = plugins.appPreferences;
-});
+
 
 function ok(value) {
     alert(value);
@@ -26,6 +22,7 @@ $(document).on('sqliteready', function() {
     $.get("template/setting/explorer.html", function(html) {
         fileExplorer = html;
     });
+
 });
 $(document).on('click', '#open_settings', function() {
     AddNavigtionPoint('#open_settings');
@@ -35,7 +32,6 @@ $(document).on('click', '#open_settings', function() {
     $("main").html(settingHtml);
     prefs.fetch(function(v) {
         $('#change_user').text(v);
-        console.log(v);
     }, fail, 'user');
 });
 /* rebuild data */
@@ -52,9 +48,12 @@ $(document).on('click', '#change_user', function() {
     var user = null;
     prefs.fetch(function(v) {
         user = v;
+        var person = prompt("Please enter your name", user);
+        if (person != null) {
+            prefs.store(function(v) {
+                $('#change_user').text(person);
+            }, fail, 'user', person);
+        }
     }, fail, 'user');
-    var person = prompt("Please enter your name", user);
-    if(person != null) {
-        prefs.store(ok, fail, 'user', user);
-    }
+
 });

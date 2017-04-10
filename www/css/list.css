@@ -29,5 +29,10 @@
 }
 
 #list .cash .td .total, #list .cash .td .date {
-    float: right;
+   text-align: right;
+}
+
+#list .tr:active{
+  background-color: #353535;
+  color: #fff;
 }
