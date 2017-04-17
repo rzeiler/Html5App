@@ -1,30 +1,16 @@
 [{
-    "type": "group",
-    "title": "Common",
-    "items": [{
-        "title": "Title",
-        "type": "textfield",
-        "key": "title"
-    }, {
-        "title": "Language",
-        "type": "radio",
-        "key": "lang",
-        "default": "en-us",
-        "items": [{
-            "value": "en-us",
-            "title": "English (US)"
-        }, {
-            "value": "en-gb",
-            "title": "English (UK)"
-        }]
-    }, {
-        "title": "Debug",
-        "type": "toggle",
-        "default": false,
-        "key": "debug"
-    }]
+    "type": "textfield",
+    "key": "sum",
+    "default": "0"
+},{
+    "type": "textfield",
+    "key": "month_limit",
+    "default": "900"
 }, {
-    "title": "Bentzer",
+    "type": "textfield",
+    "key": "year_limit",
+    "default": "12000"
+}, {
     "type": "textfield",
     "key": "user",
     "default": "default"

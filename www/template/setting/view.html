@@ -1,12 +1,41 @@
 <div class="table settings">
 	<div class="tr">
 		<div class="td">
-			<h2>Allgemein</h2>
+			<h2>Anzeige</h2>
+		</div>
+	</div>
+	<div class="tr">
+		<div class="td">
+			<select id="sum">
+			 	<option value="0">dieser Monat</option>
+				<option value="1">letzten 3 Monate</option>
+				<option value="2">dieses Jahr</option>
+				<option value="3">Alles</option>
+      </select>
+			<p>Summe eines Zeitraum, pro Kategorie</p>
+		</div>
+	</div>
+	<div class="tr">
+		<div class="td">
+			<h2>Einstellung</h2>
 		</div>
 	</div>
 	<div class="tr">
 		<div class="td">
 			<a id="change_user">...</a>
+			<p>Benutzer der Daten</p>
+		</div>
+	</div>
+	<div class="tr">
+		<div class="td">
+			<a id="month_limit">...</a>
+			<p>Bei überschreitung der Grenz gibt es eine Information</p>
+		</div>
+	</div>
+	<div class="tr">
+		<div class="td">
+			<a id="year_limit">...</a>
+			<p>Bei überschreitung der Grenz gibt es eine Information</p>
 		</div>
 	</div>
 	<div class="tr">
@@ -16,7 +45,12 @@
 	</div>
 	<div class="tr">
 		<div class="td">
-			<a class="getBackupJsonFile">Sicherung wiederherstellen</a>
+			<a class="getBackupJsonFile">Wiederherstellen</a>
+		</div>
+	</div>
+	<div class="tr">
+		<div class="td">
+			<a class="setBackupJsonFile">Sichern</a>
 		</div>
 	</div>
 </div>

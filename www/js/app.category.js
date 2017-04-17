@@ -15,6 +15,9 @@ $(document).on('sqliteready', function() {
         $.get("template/category/form.html", function(html) {
             categoryForm = html;
         });
+
+
+
     });
 });
 
@@ -30,10 +33,8 @@ function CategoryToList(data) {
         s.find(".title").css('color', c[0].color);
     }
     s.find(".title").text(data.title);
-    if (data.total != null) {
-        var sum = "&sum; " + data.total + " &euro;";
-        s.find(".sum").html(sum);
-    }
+    var sum = "&sum; " + data.total + " &euro;";
+    s.find(".sum").html(sum);
     s.find(".edit_category").data('id', data.id);
     s.find(".open_cashs").data('id', data.id);
     $('#list').append(s);
@@ -47,16 +48,20 @@ $(document).on('search', '.categorys_filter', function() {
 /* main view*/
 $(document).on('click', '#open_categorys', function() {
     openCaregoryId = 0;
+    sqlite.GetOpenMonthCash('rze');
     AddNavigtionPoint('#open_categorys');
+    $('#openDesktop').addClass('show');
     $('#open_settings').addClass('show');
     $("header .title b").text('Kategorien');
     $('body').removeClass('grey');
     $("main").html(categoryList);
-    prefs.fetch(function(v) {
-        sqlite.db.transaction(function(tx) {
-            sqlite.CategorysToListByUser(v, tx, CategoryToList, null);
-        });
-    }, fail, 'user');
+    prefs.fetch(function(sum) {
+        prefs.fetch(function(v) {
+            sqlite.db.transaction(function(tx) {
+                sqlite.CategorysToListByUser(v, tx, CategoryToList, null, sum);
+            });
+        }, prefail, 'user');
+    }, prefail, 'sum');
 });
 /* save click */
 $(document).on('click', '#save_category', function() {

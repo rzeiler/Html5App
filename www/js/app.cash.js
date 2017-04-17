@@ -54,6 +54,7 @@ $(document).on('click', '#save_cash', function() {
     cash.repeat = $('#repeat').val();
     cash.total = $('#total').val();
     cash.category = openCaregoryId;
+    cash.iscloned = 0;
     if(cash.content != "" && cash.createdate != "" && cash.repeat != "" && cash.total != "" && cash.category != "") {
         sqlite.db.transaction(function(tx) {
             sqlite.saveCash(cash, tx, function(result) {

@@ -1,10 +1,23 @@
-.table.settings a {
-    padding: 20px;
+.table.settings a, .table.settings p {
+    padding: 4px;
     background-color: #fff;
     color: #2F323F;
 }
 
-.table.settings a:hover {
+.table.settings h2 {
+    color: #5993FF;
+}
+
+.table.settings a {
+    font-weight: bolder;
+    color: #000;
+}
+
+.table.settings p {
+    color: #777;
+}
+
+.table.settings a:active {
     background-color: #2F323F;
     color: #fff;
 }

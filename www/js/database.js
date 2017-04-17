@@ -51,6 +51,7 @@ var sqlite = {
         }, sqlite.fail);
     },
     saveCash: function(data, tx, toast, callback) {
+
         executeQuery = "";
         params = [];
         data.total = sqlite.toSqliteNumber(data.total);
@@ -62,6 +63,7 @@ var sqlite = {
             params = [data.content, data.createdate, data.category, data.repeat, data.total, data.iscloned, data.category, data.id];
         }
         tx.executeSql(executeQuery, params, function(tx, result) {
+            console.log("save", params);
             if (toast != null) {
                 /*toast*/
                 toast(result);
@@ -72,15 +74,23 @@ var sqlite = {
             }
         }, sqlite.fail);
     },
-    CategorysToListByUser: function(user, transaction, callback, search) {
+    CategorysToListByUser: function(user, transaction, callback, search, sum) {
         try {
-
-
-            var query = 'SELECT a.id, a.title, SUM(b.total) AS total FROM category a LEFT JOIN cash b ON b.category=a.id WHERE a.user=? GROUP BY a.id ORDER BY a.title ASC, a.rating DESC ',
-                params = [user];
+            var current = new Date();
+            var start = (new Date(current.getFullYear(), current.getMonth(), 1, 0, 0, 0, 0).getTime()) / 1000;
+            switch (sum) {
+                case 2:
+                    start = (new Date(current.getFullYear(), current.getMonth() - 3, 1, 0, 0, 0, 0).getTime()) / 1000;
+                    break;
+                case 3:
+                    start = (new Date(current.getFullYear(), current.getMonth() - 11, 1, 0, 0, 0, 0).getTime()) / 1000;
+                    break;
+            }
+            var query = 'SELECT a.id, a.title, IFNULL(SUM(b.total), 0.00) AS total FROM category a LEFT JOIN cash b ON b.category=a.id AND b.createdate>=? WHERE  a.user=? GROUP BY a.id ORDER BY a.title ASC, a.rating DESC ',
+                params = [start, user];
             if (search != null && search.length > 0) {
-                query = "SELECT * FROM category WHERE user=? AND (title LIKE ? OR title LIKE ?) ORDER BY title ASC, rating DESC ";
-                params = [user, "%" + search + "%", search + "%"];
+                var query = 'SELECT a.id, a.title, IFNULL(SUM(b.total), 0.00) AS total FROM category a LEFT JOIN cash b ON b.category=a.id AND b.createdate>=? WHERE  a.user=? AND (title LIKE ? OR title LIKE ?) GROUP BY a.id ORDER BY a.title ASC, a.rating DESC ',
+                    params = [start, user, "%" + search + "%", search + "%"];
             }
             transaction.executeSql(query, params, function(txa, results) {
                 var len = results.rows.length,
@@ -132,6 +142,53 @@ var sqlite = {
             }, sqlite.fail);
         });
     },
+    GetOpenMonthCash: function(user) {
+        sqlite.db.transaction(function(transaction) {
+            /* 1. einmalig
+              2. wöchentlich
+              3. monatlich
+              4. järlich
+            */
+            /* month */
+            var current = new Date();
+            var query = "SELECT cash.content, cash.createdate, cash.category, cash.repeat, cash.total, cash.iscloned FROM cash, category WHERE cash.repeat=? AND cash.iscloned = 0 AND category.id=cash.category AND category.user=? AND cash.createdate <= ?";
+            var param = [
+                [2, user, ((new Date(current.getFullYear(), current.getMonth(), current.getDate() - 7, 0, 0, 0, 0).getTime()) / 1000)],
+                [3, user, ((new Date(current.getFullYear(), current.getMonth() - 1, 1, 0, 0, 0, 0).getTime()) / 1000)],
+                [4, user, ((new Date(current.getFullYear() - 1, current.getMonth(), 1, 0, 0, 0, 0).getTime()) / 1000)]
+            ];
+            for (var i = 0; i < param.length; i++) {
+                var para = param[i];
+                transaction.executeSql(query, para, function(tx, result) {
+                    var len = results.rows.length,
+                        i;
+                    for (i = 0; i < len; i++) {
+                        var item = results.rows.item(i);
+                        item.iscloned = 1;
+                        this.saveCash(item, tx, function(result) {
+                            if (result.rowsAffected > 0) {
+                                  alert(item.content + "  geaendert.");
+                                item.iscloned = 0;
+                                item.id = null;
+                                this.saveCash(item, tx, function(result) {
+                                    if (result.rowsAffected > 0) {
+                                        alert(item.content + "  gespeichern.");
+                                    } else {
+                                        alert("Fehler beim Speichern.");
+                                    }
+                                }, null);
+                            } else {
+                                alert("Fehler beim Ändern.");
+                            }
+                        }, null);
+                    }
+                    console.log(result);
+                }, function(error) {
+                    console.log(error);
+                });
+            }
+        });
+    },
     ResoreDataBaseByJson: function(json) {
         var data = $.parseJSON(json);
         executeQuery = "";
@@ -146,6 +203,22 @@ var sqlite = {
                         sqlite.saveCategory(category, tx, null, true);
                     });
                 }, sqlite.fail);
+            }, sqlite.fail);
+        });
+    },
+    GetDataBaseAsJson: function() {
+        executeQuery = "";
+        sqlite.db.transaction(function(tx) {
+            executeQuery = "SELECT * FROM cash";
+            tx.executeSql(executeQuery, params, function(tx, result) {
+                executeQuery = "SELECT * FROM category ";
+                $.each(data, function(index, category) {
+                    tx.executeSql(executeQuery, params, function(tx, result) {
+                        $.each(data, function(index, category) {
+
+                        });
+                    }, sqlite.fail);
+                });
             }, sqlite.fail);
         });
     },
