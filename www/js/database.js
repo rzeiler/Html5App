@@ -25,6 +25,13 @@ var sqlite = {
             }, sqlite.fail);
         });
     },
+    removeCategory: function(data, tx, callback) {
+        executeQuery = "DELETE FROM category WHERE ID=?";
+        params = [data.id];
+        tx.executeSql(executeQuery, params, function(tx, result) {
+            callback(result);
+        }, sqlite.fail);
+    },
     saveCategory: function(data, tx, toast, bool) {
         executeQuery = "";
         params = [];
@@ -51,28 +58,33 @@ var sqlite = {
         }, sqlite.fail);
     },
     saveCash: function(data, tx, toast, callback) {
-
-        executeQuery = "";
-        params = [];
-        data.total = sqlite.toSqliteNumber(data.total);
-        if (data.id == null) {
-            executeQuery = "INSERT INTO cash (content, createdate, category, repeat, total, iscloned, category) VALUES (?,?,?,?,?,?,?)";
-            params = [data.content, data.createdate, data.category, data.repeat, data.total, data.iscloned, data.category];
-        } else {
-            executeQuery = "UPDATE cash SET content=?, createdate=?, category=?, repeat=?, total=?, iscloned=?, category=? WHERE id=?";
-            params = [data.content, data.createdate, data.category, data.repeat, data.total, data.iscloned, data.category, data.id];
+        try {
+            executeQuery = "";
+            params = [];
+            data.total = sqlite.toSqliteNumber(data.total);
+            if (data.id == null) {
+                executeQuery = "INSERT INTO cash (content, createdate, category, repeat, total, iscloned, category) VALUES (?,?,?,?,?,?,?)";
+                params = [data.content, data.createdate, data.category, data.repeat, data.total, data.iscloned, data.category];
+            } else {
+                executeQuery = "UPDATE cash SET content=?, createdate=?, category=?, repeat=?, total=?, iscloned=?, category=? WHERE id=?";
+                params = [data.content, data.createdate, data.category, data.repeat, data.total, data.iscloned, data.category, data.id];
+            }
+            tx.executeSql(executeQuery, params, function(tx, result) {
+                console.log("save", params);
+                if (toast != null) {
+                    /*toast*/
+                    toast(result);
+                }
+                if (callback != null) {
+                    /* function*/
+                    callback(result);
+                }
+            }, function(error) {
+                console.log("error", error);
+            });
+        } catch (e) {
+            console.log("catch", e);
         }
-        tx.executeSql(executeQuery, params, function(tx, result) {
-            console.log("save", params);
-            if (toast != null) {
-                /*toast*/
-                toast(result);
-            }
-            if (callback != null) {
-                /* function*/
-                callback(result);
-            }
-        }, sqlite.fail);
     },
     CategorysToListByUser: function(user, transaction, callback, search, sum) {
         try {
@@ -144,45 +156,54 @@ var sqlite = {
     },
     GetOpenMonthCash: function(user) {
         sqlite.db.transaction(function(transaction) {
-            /* 1. einmalig
-              2. wöchentlich
-              3. monatlich
-              4. järlich
+            /* 0. einmalig
+              1. wöchentlich
+              2. monatlich
+              3. järlich
             */
             /* month */
             var current = new Date();
-            var query = "SELECT cash.content, cash.createdate, cash.category, cash.repeat, cash.total, cash.iscloned FROM cash, category WHERE cash.repeat=? AND cash.iscloned = 0 AND category.id=cash.category AND category.user=? AND cash.createdate <= ?";
+            var query = "SELECT cash.id, cash.content, cash.createdate, cash.category, cash.repeat, cash.total, cash.iscloned FROM cash, category WHERE cash.repeat=? AND cash.iscloned = 0 AND category.id=cash.category AND category.user=? AND cash.createdate <= ?";
             var param = [
-                [2, user, ((new Date(current.getFullYear(), current.getMonth(), current.getDate() - 7, 0, 0, 0, 0).getTime()) / 1000)],
-                [3, user, ((new Date(current.getFullYear(), current.getMonth() - 1, 1, 0, 0, 0, 0).getTime()) / 1000)],
-                [4, user, ((new Date(current.getFullYear() - 1, current.getMonth(), 1, 0, 0, 0, 0).getTime()) / 1000)]
+                [1, user, ((new Date(current.getFullYear(), current.getMonth(), current.getDate() - 7, 0, 0, 0, 0).getTime()) / 1000)],
+                [2, user, ((new Date(current.getFullYear(), current.getMonth() - 1, 1, 0, 0, 0, 0).getTime()) / 1000)],
+                [3, user, ((new Date(current.getFullYear() - 1, current.getMonth(), 1, 0, 0, 0, 0).getTime()) / 1000)]
             ];
-            for (var i = 0; i < param.length; i++) {
-                var para = param[i];
-                transaction.executeSql(query, para, function(tx, result) {
-                    var len = results.rows.length,
+            for (var a = 0; a < param.length; a++) {
+                console.log('param', param[a], a);
+                transaction.executeSql(query, param[a], function(tx, result) {
+                    console.log("SELECT", result);
+                    var len = result.rows.length,
                         i;
                     for (i = 0; i < len; i++) {
-                        var item = results.rows.item(i);
-                        item.iscloned = 1;
-                        this.saveCash(item, tx, function(result) {
-                            if (result.rowsAffected > 0) {
-                                  alert(item.content + "  geaendert.");
-                                item.iscloned = 0;
-                                item.id = null;
-                                this.saveCash(item, tx, function(result) {
-                                    if (result.rowsAffected > 0) {
-                                        alert(item.content + "  gespeichern.");
-                                    } else {
-                                        alert("Fehler beim Speichern.");
-                                    }
-                                }, null);
-                            } else {
-                                alert("Fehler beim Ändern.");
-                            }
-                        }, null);
+                        var data = result.rows.item(i);
+                        console.log('item', data);
+                        var d = new Date(data.createdate * 1000);
+                        var nd = d;
+                        switch (data.repeat) {
+                            case 1:
+                                /* wöchentlich */
+                                nd = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 7, 0, 0, 0, 0);
+                                break;
+                            case 2:
+                                /* monatlich */
+                                nd = new Date(d.getFullYear(), d.getMonth() + 1, d.getDate(), 0, 0, 0, 0);
+                                break;
+                            case 3:
+                                /* jährlich */
+                                nd = new Date(d.getFullYear() + 1, d.getMonth(), d.getDate(), 0, 0, 0, 0);
+                                break;
+                        }
+                        data.createdate = nd.getTime() / 1000;
+                        sqlite.db.sqlBatch([
+                            ['UPDATE cash SET iscloned=? WHERE id=?;', [1, data.id]],
+                            ['INSERT INTO cash (content, createdate, category, repeat, total, iscloned, category) VALUES (?,?,?,?,?,?,?)', [data.content, data.createdate, data.category, data.repeat, data.total, 0, data.category]],
+                        ], function() {
+                            console.log('Populated database OK');
+                        }, function(error) {
+                            console.log('SQL batch ERROR: ' + error.message);
+                        });
                     }
-                    console.log(result);
                 }, function(error) {
                     console.log(error);
                 });
@@ -192,6 +213,7 @@ var sqlite = {
     ResoreDataBaseByJson: function(json) {
         var data = $.parseJSON(json);
         executeQuery = "";
+        params = [];
         sqlite.db.transaction(function(tx) {
             executeQuery = "DELETE FROM cash";
             tx.executeSql(executeQuery, params, function(tx, result) {

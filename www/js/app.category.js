@@ -1,10 +1,14 @@
 var currentData, currentHtml, openCaregoryId, openCashId;
 var categoryView = null,
     categoryList = null,
-    categoryForm = null;
+    categoryForm = null,
+    confirmForm = null;
 $(document).on('sqliteready', function() {
     $.getJSON("data/color.json", function(data) {
         colorData = data;
+        $.get("template/confirm.html", function(html) {
+            confirmForm = html;
+        });
         $.get("template/category/view.html", function(html) {
             categoryView = html;
         });
@@ -15,9 +19,6 @@ $(document).on('sqliteready', function() {
         $.get("template/category/form.html", function(html) {
             categoryForm = html;
         });
-
-
-
     });
 });
 
@@ -43,7 +44,13 @@ function CategoryToList(data) {
 $(document).on('search', '.categorys_filter', function() {
     var val = $(this).val();
     $('#list').html('');
-    sqlite.CategorysToListByUser('rze', CategoryToList, val);
+    prefs.fetch(function(sum) {
+        prefs.fetch(function(v) {
+            sqlite.db.transaction(function(tx) {
+                sqlite.CategorysToListByUser(v, tx, CategoryToList, val, sum);
+            });
+        }, prefail, 'user');
+    }, prefail, 'sum');
 });
 /* main view*/
 $(document).on('click', '#open_categorys', function() {
@@ -90,17 +97,28 @@ $(document).on('click', '#save_category', function() {
 });
 /* delete */
 $(document).on('click', '#confirm_delete_category', function() {
-    $('.alert').addClass('show');
+
+    var cf = $(confirmForm);
+    cf.on('click', 'button.yes', function() {
+        var category = new Object();
+        category.id = openCaregoryId;
+        sqlite.db.transaction(function(tx) {
+            sqlite.removeCategory(category, tx, function(result) {
+                if (result.rowsAffected > 0) {
+                    cf.remove();
+                    $('.back').trigger('click');
+                    $("#toast").toast("Kategory entfernt");
+                } else {
+                    alert("Fehler beim Speichern.");
+                }
+            });
+        });
+    });
+    cf.on('click', 'button.no', function() {
+        cf.remove();
+    });
+    $("main").append(cf);
     $('.alert .text').text("Wollen Sie den Eintrag wirklich löschen?");
-    $('.alert .options button').unbind();
-    $('.alert .options button.yes').bind("click", function() {
-        alert(" category User clicked on 'yes");
-        $('.alert').removeClass('show');
-    });
-    $('.alert .options button.no').bind("click", function() {
-        alert("category User clicked on 'no");
-        $('.alert').removeClass('show');
-    });
 });
 /* edit category */
 $(document).on('click', '.edit_category', function() {
